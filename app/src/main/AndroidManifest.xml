@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.group12.syde362.checkout" >
 
+    <uses-permission android:name="android.permission.NFC" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
