@@ -56,6 +56,7 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, new ProductFragment())
                     .commit();
+            mTitle = getString(R.string.title_section1);
         }
         else {
             fragmentManager.beginTransaction()

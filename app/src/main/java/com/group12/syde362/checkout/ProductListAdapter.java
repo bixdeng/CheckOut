@@ -18,6 +18,7 @@ public class ProductListAdapter extends ArrayAdapter{
     private boolean useList = true;
 
     public ProductListAdapter(Context context, List items) {
+        //super(context, android.R.layout.simple_list_item_checked, items);
         super(context, android.R.layout.simple_list_item_1, items);
         this.context = context;
     }
@@ -27,6 +28,9 @@ public class ProductListAdapter extends ArrayAdapter{
      */
     private class ViewHolder{
         TextView titleText;
+        TextView priceText;
+        TextView quantityText;
+        TextView weightText;
     }
 
     /**
@@ -54,6 +58,9 @@ public class ProductListAdapter extends ArrayAdapter{
 
             holder = new ViewHolder();
             holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
+            holder.priceText = (TextView)viewToUse.findViewById(R.id.priceTextView);
+            holder.quantityText = (TextView)viewToUse.findViewById(R.id.quantityTextView);
+            holder.weightText = (TextView)viewToUse.findViewById(R.id.weightTextView);
             viewToUse.setTag(holder);
         } else {
             viewToUse = convertView;
@@ -61,6 +68,9 @@ public class ProductListAdapter extends ArrayAdapter{
         }
 
         holder.titleText.setText(item.getItemTitle());
+        holder.quantityText.setText(item.getItemQuantity());
+        holder.priceText.setText(item.getItemPrice());
+        holder.weightText.setText(item.getItemWeight());
         return viewToUse;
     }
 }

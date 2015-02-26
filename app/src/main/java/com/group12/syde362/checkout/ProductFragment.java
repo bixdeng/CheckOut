@@ -76,10 +76,10 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         super.onCreate(savedInstanceState);
 
         productList = new ArrayList();
-        productList.add(new ProductListItem("Apple"));
-        productList.add(new ProductListItem("Bananas"));
-        productList.add(new ProductListItem("Coconut"));
-        productList.add(new ProductListItem("Dragonfruit"));
+        productList.add(new ProductListItem("Apple","0.2kg", "1", "$1.00"));
+        productList.add(new ProductListItem("Banana", "1kg", "2", "$2.00"));
+        productList.add(new ProductListItem("Coconut", "2kg", "3", "$3.00"));
+        productList.add(new ProductListItem("Dragonfruit", "5kg", "4", "$4.00"));
         mAdapter = new ProductListAdapter(getActivity(), productList);
 
 
