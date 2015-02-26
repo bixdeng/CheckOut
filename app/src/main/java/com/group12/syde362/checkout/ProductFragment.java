@@ -1,9 +1,11 @@
 package com.group12.syde362.checkout;
 
 import android.app.Activity;
+//import android.app.FragmentManager;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,6 +138,12 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         ProductListItem item = (ProductListItem) this.productList.get(position);
         Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!"
                 , Toast.LENGTH_SHORT).show();
+
+        SingleProductFragment singleProductFrag = new SingleProductFragment();
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container, singleProductFrag).addToBackStack( "tag" );
+        ft.commit();
     }
 
     /**
