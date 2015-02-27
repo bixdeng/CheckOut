@@ -78,10 +78,10 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         super.onCreate(savedInstanceState);
 
         productList = new ArrayList();
-        productList.add(new ProductListItem("Apple"));
-        productList.add(new ProductListItem("Bananas"));
-        productList.add(new ProductListItem("Coconut"));
-        productList.add(new ProductListItem("Dragonfruit"));
+        //productList.add(new ProductListItem("Apple"));
+        //productList.add(new ProductListItem("Bananas"));
+        //productList.add(new ProductListItem("Coconut"));
+        //productList.add(new ProductListItem("Dragonfruit"));
         mAdapter = new ProductListAdapter(getActivity(), productList);
 
 
@@ -139,10 +139,10 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!"
                 , Toast.LENGTH_SHORT).show();
 
-        SingleProductFragment singleProductFrag = new SingleProductFragment();
+        //SingleProductFragment singleProductFrag = new SingleProductFragment();
         android.support.v4.app.FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.container, singleProductFrag).addToBackStack( "tag" );
+        ft.replace(R.id.container, fm.findFragmentByTag("Item")).addToBackStack( "tag" );
         ft.commit();
     }
 
