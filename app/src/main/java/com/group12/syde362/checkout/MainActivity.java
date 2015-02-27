@@ -249,7 +249,15 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                mTextView.setText("Read content: " + result);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+
+                SingleProductFragment newSingleProduct = new SingleProductFragment();
+                newSingleProduct.setText(result);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container,  newSingleProduct)
+                        .commit();
+                //TextView newSingleProductTextView = (TextView) newSingleProduct.getView().findViewById(R.id.single_product_fragment_view);
+                //newSingleProductTextView.setText("Read content: " + result);
             }
         }
     }

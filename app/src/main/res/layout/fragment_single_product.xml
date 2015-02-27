@@ -5,7 +5,10 @@
     tools:context="com.group12.syde362.checkout.SingleProductFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+    <TextView
+        android:id="@+id/single_product_fragment_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

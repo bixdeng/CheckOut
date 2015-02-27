@@ -6,6 +6,7 @@ import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -65,7 +66,10 @@ public class SingleProductFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_single_product, container, false);
+        View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
+        TextView singleProductTextView = (TextView) singleProductView.findViewById(R.id.single_product_fragment_view);
+        singleProductTextView.setText("This is a single product!!!");
+        return singleProductView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -107,4 +111,9 @@ public class SingleProductFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    public void setText(String result){
+        TextView singleProductTextView = (TextView) getView().findViewById(R.id.single_product_fragment_view);
+        singleProductTextView.setText(result);
+
+    }
 }
