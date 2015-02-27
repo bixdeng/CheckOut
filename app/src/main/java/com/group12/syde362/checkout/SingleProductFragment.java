@@ -35,15 +35,15 @@ public class SingleProductFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param result Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment SingleProductFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SingleProductFragment newInstance(String param1, String param2) {
+    public static SingleProductFragment newInstance(String result, String param2) {
         SingleProductFragment fragment = new SingleProductFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM1, result);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -68,7 +68,12 @@ public class SingleProductFragment extends Fragment {
         // Inflate the layout for this fragment
         View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
         TextView singleProductTextView = (TextView) singleProductView.findViewById(R.id.single_product_fragment_view);
-        singleProductTextView.setText("This is a single product!!!");
+        Bundle bundle = getArguments();
+
+        String result = bundle.getString(ARG_PARAM1);
+
+        if (result!= null)
+            singleProductTextView.setText(result);
         return singleProductView;
     }
 
@@ -109,11 +114,5 @@ public class SingleProductFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
-    }
-
-    public void setText(String result){
-        TextView singleProductTextView = (TextView) getView().findViewById(R.id.single_product_fragment_view);
-        singleProductTextView.setText(result);
-
     }
 }

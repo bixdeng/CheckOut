@@ -251,10 +251,9 @@ public class MainActivity extends ActionBarActivity
             if (result != null) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
-                SingleProductFragment newSingleProduct = new SingleProductFragment();
-                newSingleProduct.setText(result);
+                SingleProductFragment newSingleProduct = SingleProductFragment.newInstance(result, "hi");
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container,  newSingleProduct)
+                        .replace(R.id.container,  newSingleProduct).addToBackStack("Item")
                         .commit();
                 //TextView newSingleProductTextView = (TextView) newSingleProduct.getView().findViewById(R.id.single_product_fragment_view);
                 //newSingleProductTextView.setText("Read content: " + result);
