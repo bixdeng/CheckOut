@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/single_product_fragment"
@@ -11,15 +11,12 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/singleProductName"
-        android:layout_gravity="center" />
+        android:layout_gravity="center_horizontal|top"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="133dp"
+        />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/singleProductPrice"
-        android:layout_gravity="center_horizontal|bottom" />
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,6 +24,22 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/singleProductWeight"
-        android:layout_gravity="center_horizontal|top" />
+        android:layout_gravity="center_horizontal|top"
+        android:layout_below="@+id/singleProductName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
 
-</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/singleProductPrice"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/singleProductWeight"
+        android:layout_alignLeft="@+id/singleProductWeight"
+        android:layout_alignStart="@+id/singleProductWeight"
+        android:layout_marginTop="50dp" />
+
+</RelativeLayout>
