@@ -11,8 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.json.*;
 import android.util.Log;
-
-
+import android.widget.Toast;
 
 
 /**
@@ -126,6 +125,7 @@ public class SingleProductFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
