@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup;
+import org.json.*;
+import android.util.Log;
+
+
 
 
 /**
@@ -22,12 +26,16 @@ import android.view.ViewGroup;
 public class SingleProductFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_NAME = "param1";
+    private static final String ARG_WEIGHT = "param2";
+    private static final String ARG_PRICE = "param2";
+
+
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String weight;
+    private String name;
+    private String price;
 
     private OnFragmentInteractionListener mListener;
 
@@ -42,11 +50,24 @@ public class SingleProductFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static SingleProductFragment newInstance(String result, String param2) {
         SingleProductFragment fragment = new SingleProductFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, result);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        //storeNFCData(result);
+
+        try {
+            JSONObject obj = new JSONObject(result);
+            String tempName = obj.getString("name");
+            String tempWeight = obj.getString("weight");
+            String tempPrice = obj.getString("price");
+            Bundle args = new Bundle();
+            args.putString(ARG_NAME, tempName);
+            args.putString(ARG_WEIGHT, tempWeight);
+            args.putString(ARG_PRICE, tempPrice);
+            fragment.setArguments(args);
+
+        }
+        catch (JSONException e) {
+        }
         return fragment;
+
     }
 
     public SingleProductFragment() {
@@ -57,8 +78,10 @@ public class SingleProductFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            name = getArguments().getString(ARG_NAME);
+            weight = getArguments().getString(ARG_WEIGHT);
+            price = getArguments().getString(ARG_PRICE);
+
         }
     }
 
@@ -67,13 +90,16 @@ public class SingleProductFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
-        TextView singleProductTextView = (TextView) singleProductView.findViewById(R.id.single_product_fragment_view);
+        TextView singleProductPrice = (TextView) singleProductView.findViewById(R.id.singleProductPrice);
+        TextView singleProductWeight = (TextView) singleProductView.findViewById(R.id.singleProductWeight);
+        TextView singleProductName = (TextView) singleProductView.findViewById(R.id.singleProductName);
+
         Bundle bundle = getArguments();
 
-        String result = bundle.getString(ARG_PARAM1);
+        singleProductName.setText("Name: " + bundle.getString(ARG_NAME));
+        singleProductPrice.setText("Price: " + bundle.getString(ARG_PRICE));
+        singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT));
 
-        if (result!= null)
-            singleProductTextView.setText(result);
         return singleProductView;
     }
 
@@ -115,4 +141,6 @@ public class SingleProductFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
+
 }
