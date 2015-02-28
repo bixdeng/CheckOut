@@ -88,7 +88,7 @@ public class SingleProductFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
 
@@ -113,6 +113,7 @@ public class SingleProductFragment extends Fragment {
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
+                addItemToList();
             }
         });
 
@@ -157,6 +158,13 @@ public class SingleProductFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    public void addItemToList(){
+        ProductListItem item = new ProductListItem(this.name, this.weight, this.price);
+        //Fragment itemListFragment = this.getActivity().getSupportFragmentManager().findFragmentById(R.id.);
+        System.out.println("new item: " + item);
+        ((MainActivity)getActivity()).getItemListFragment().getProductList().add(item);
     }
 
 

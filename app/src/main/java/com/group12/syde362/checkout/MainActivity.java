@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity
     private NfcAdapter mNfcAdapter;
     public static final String MIME_TEXT_PLAIN = "text/plain";
     public static final String TAG = "NfcDemo";
+    private ProductFragment itemListFragment = new ProductFragment();
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -269,12 +270,12 @@ public class MainActivity extends ActionBarActivity
 
         if (position+1 == 1){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, new ProductFragment())
+                    .replace(R.id.container, itemListFragment)
                     .commit();
         }
         else {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                    .replace(R.id.container, itemListFragment)
                     .commit();
         }
     }
@@ -376,6 +377,10 @@ public class MainActivity extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
 
+    }
+
+    public ProductFragment getItemListFragment(){
+        return itemListFragment;
     }
 
 }

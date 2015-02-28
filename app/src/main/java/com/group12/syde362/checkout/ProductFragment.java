@@ -42,7 +42,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     private String mParam1;
     private String mParam2;
 
-    private List productList;
+    private List productList = new ArrayList();
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -77,7 +77,6 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        productList = new ArrayList();
         //productList.add(new ProductListItem("Apple"));
         //productList.add(new ProductListItem("Bananas"));
         //productList.add(new ProductListItem("Coconut"));
@@ -172,6 +171,10 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public List getProductList(){
+        return productList;
     }
 
 }
