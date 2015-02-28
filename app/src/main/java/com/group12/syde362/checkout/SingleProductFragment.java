@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import org.json.*;
 import android.util.Log;
 import android.widget.Toast;
+import android.widget.Button;
+import android.view.View.OnClickListener;
 
 
 /**
@@ -89,6 +91,7 @@ public class SingleProductFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
+
         TextView singleProductPrice = (TextView) singleProductView.findViewById(R.id.singleProductPrice);
         TextView singleProductWeight = (TextView) singleProductView.findViewById(R.id.singleProductWeight);
         TextView singleProductName = (TextView) singleProductView.findViewById(R.id.singleProductName);
@@ -98,6 +101,20 @@ public class SingleProductFragment extends Fragment {
         singleProductName.setText("Name: " + bundle.getString(ARG_NAME));
         singleProductPrice.setText("Price: " + bundle.getString(ARG_PRICE));
         singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT));
+
+        Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
+        addButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return singleProductView;
     }
