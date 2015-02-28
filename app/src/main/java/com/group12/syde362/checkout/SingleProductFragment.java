@@ -28,7 +28,7 @@ public class SingleProductFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_NAME = "param1";
     private static final String ARG_WEIGHT = "param2";
-    private static final String ARG_PRICE = "param2";
+    private static final String ARG_PRICE = "param3";
 
 
 
