@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 import android.view.View;
@@ -105,7 +106,16 @@ public class SingleProductFragment extends Fragment {
         Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
+                //getActivity().getSupportFragmentManager().popBackStack();
+                //above line actually removes the single item fragment, which is not what we want.
+                // clicking on cancel and then
+                android.support.v4.app.FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
+                ft.replace(R.id.container, itemListFragment);
+                ft.commit();
+
             }
         });
 
@@ -114,6 +124,11 @@ public class SingleProductFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
                 addItemToList();
+                android.support.v4.app.FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
+                ft.replace(R.id.container, itemListFragment);
+                ft.commit();
             }
         });
 
@@ -165,6 +180,10 @@ public class SingleProductFragment extends Fragment {
         //Fragment itemListFragment = this.getActivity().getSupportFragmentManager().findFragmentById(R.id.);
         System.out.println("new item: " + item);
         ((MainActivity)getActivity()).getItemListFragment().getProductList().add(item);
+    }
+
+    public String getName(){
+        return name;
     }
 
 

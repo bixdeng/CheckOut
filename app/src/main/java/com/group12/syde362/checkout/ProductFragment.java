@@ -6,6 +6,7 @@ import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,13 +136,13 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
             mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }*/
         ProductListItem item = (ProductListItem) this.productList.get(position);
-        Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!"
-                , Toast.LENGTH_SHORT).show();
 
         //SingleProductFragment singleProductFrag = new SingleProductFragment();
         android.support.v4.app.FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.container, fm.findFragmentByTag("Item")).addToBackStack( "tag" );
+        SingleProductFragment matchingItem = findMatchingSingleProductFragment(fm.getFragments(), item.getItemTitle());
+
+        ft.replace(R.id.container, matchingItem).addToBackStack("tag");
         ft.commit();
     }
 
@@ -175,6 +176,18 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     public List getProductList(){
         return productList;
+    }
+
+    public SingleProductFragment findMatchingSingleProductFragment(List<Fragment> loFragments, String itemName){
+        for (int i = 0; i < loFragments.size(); i++) {
+            if(loFragments.get(i) instanceof SingleProductFragment){
+                SingleProductFragment matchedItemInfo = (SingleProductFragment) loFragments.get(i);
+                if (matchedItemInfo.getName().equals(itemName)){
+                    return matchedItemInfo;
+                }
+            }
+        }
+        return null;
     }
 
 }

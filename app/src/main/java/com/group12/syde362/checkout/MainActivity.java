@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity
             finish();
         } else {
             //NFC is enabled, and its good to go
-            Toast.makeText(this, "Tap an Item NFC Tag to Continue!.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Tap an Item NFC Tag to Continue!", Toast.LENGTH_LONG).show();
         }
 
         handleIntent(getIntent());
