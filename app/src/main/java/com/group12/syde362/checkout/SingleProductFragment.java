@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -106,5 +107,4 @@ public class SingleProductFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
 }
