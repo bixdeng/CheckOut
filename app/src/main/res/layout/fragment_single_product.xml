@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/single_product_fragment"
@@ -6,38 +6,57 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <FrameLayout
-        android:layout_width="317dp"
-        android:layout_height="433dp"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/singleProductName"
         android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="35dp"
-        android:background="@color/LightGrey"
-        >
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="133dp"
+        />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Food Item"
-            android:id="@+id/textView"
-            android:textSize="42sp"
-            android:layout_gravity="left|top"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"/>
-    </FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/singleProductWeight"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_below="@+id/singleProductName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
 
-    <FrameLayout
-        android:layout_width="309dp"
-        android:layout_height="60dp"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/singleProductPrice"
         android:layout_gravity="center_horizontal|bottom"
-        android:background="@color/LightGrey"
-        android:layout_marginBottom="20dp">
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/singleProductWeight"
+        android:layout_alignLeft="@+id/singleProductWeight"
+        android:layout_alignStart="@+id/singleProductWeight"
+        android:layout_marginTop="50dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Add Item to Cart"
-            android:textSize="35sp"
-            android:id="@+id/textView2"
-            android:layout_gravity="center" />
-    </FrameLayout>
-</FrameLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Item"
+        android:id="@+id/addButton"
+        android:layout_below="@+id/singleProductPrice"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/cancelButton"
+        android:layout_below="@+id/addButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp" />
+
+</RelativeLayout>

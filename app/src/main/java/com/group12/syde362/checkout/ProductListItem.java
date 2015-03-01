@@ -5,17 +5,23 @@ package com.group12.syde362.checkout;
  */
 public class ProductListItem {
 
-    private String itemTitle;
+    private String itemName;
+    private String itemWeight;
+    private String itemPrice;
+
 
     public String getItemTitle(){
-        return itemTitle;
+        return itemName;
     }
 
     public void setItemTitle(String mTitle){
-        this.itemTitle = itemTitle;
+        this.itemName = itemName;
     }
 
-    public ProductListItem(String title){
-        this.itemTitle = title;
+    public ProductListItem(String name, String weight, String price){
+
+        this.itemName = name;
+        this.itemWeight = weight;
+        this.itemPrice = price;
     }
 }
