@@ -10,20 +10,28 @@
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Confirm and Pay"
-        android:id="@+id/getBtn"
-        android:layout_gravity="center"
-        android:onClick="getWeight"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/getTxt"
         android:layout_gravity="center_horizontal|bottom" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm and Pay"
+        android:id="@+id/getBtn"
+        android:layout_gravity="right|bottom"
+        android:onClick="getWeight"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Unverified"
+        android:id="@+id/weightVerify"
+        android:layout_gravity="center" />
 
 
 </FrameLayout>

@@ -101,8 +101,8 @@ public class SingleProductFragment extends Fragment {
         Bundle bundle = getArguments();
 
         singleProductName.setText("Name: " + bundle.getString(ARG_NAME));
-        singleProductPrice.setText("Price: " + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT));
+        singleProductPrice.setText("Price: $" + bundle.getString(ARG_PRICE));
+        singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT) + " kg");
 
         Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new OnClickListener() {
@@ -123,7 +123,7 @@ public class SingleProductFragment extends Fragment {
         Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
                 addItemToList();
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -181,6 +181,8 @@ public class SingleProductFragment extends Fragment {
         //Fragment itemListFragment = this.getActivity().getSupportFragmentManager().findFragmentById(R.id.);
         System.out.println("new item: " + item);
         ((MainActivity)getActivity()).getItemListFragment().getProductList().add(item);
+        ((MainActivity)getActivity()).getItemListFragment().updateTotalWeight(item);
+        ((MainActivity)getActivity()).getItemListFragment().updateTotalPrice(item);
     }
 
     public String getName(){

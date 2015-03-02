@@ -66,6 +66,8 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private double totalWeight = 0.0;
+    private double totalPrice = 0.0;
 
     private List productList = new ArrayList();
     private OnFragmentInteractionListener mListener;
@@ -130,6 +132,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
             public void onClick(View v) {
                 // Perform action on click
                 getWeight(v);
+                Log.d("Calculated Weight: ", totalWeight + "kg");
             }
         });
 
@@ -219,7 +222,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     ArrayList<HashMap<String, Double>> productsList;
 
     // url to get all products list
-    private static String url_all_products = "http://192.168.0.110/android_connect/get_all_products.php";
+    private static String url_all_products = "http://192.168.43.196/android_connect/get_all_products.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -256,13 +259,13 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         /**
          * getting All products from url
          * */
-        protected String doInBackground(String... args) {
+         protected String doInBackground(String... args) {
             // Building Parameters
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             // getting JSON string from URL
             JSONObject json = jParser.makeHttpRequest(url_all_products, "GET", params);
 
-            // Check your log cat for JSON reponse
+            // Check your log cat for JSON response
             Log.d("All Products: ", json.toString());
 
             try {
@@ -284,8 +287,10 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
 /*                        TextView getText = (TextView) getView().findViewById(R.id.getTxt);
                         getText.setText(String.valueOf(weight));*/
-                        Log.d("WEIGHT: ", String.valueOf(weight));
-
+                        Log.d("WEIGHT: ", "measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
+                        System.out.println("measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
+                        TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
+                                verifyLabel.setText("Verified!");
                         // creating new HashMap
                         HashMap<String, Double> map = new HashMap<String, Double>();
 
@@ -352,5 +357,24 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
             }
         }
         return null;
+    }
+
+    public void updateTotalWeight(ProductListItem newItem){
+        totalWeight = totalWeight + newItem.getItemWeight();
+        return;
+
+    }
+
+    public void updateTotalPrice(ProductListItem newItem){
+        totalPrice = totalPrice + newItem.getItemPrice();
+        return;
+    }
+
+    public double getTotalWeight(){
+        return totalWeight;
+    }
+
+    public double getTotalPrice(){
+        return totalPrice;
     }
 }

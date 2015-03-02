@@ -6,8 +6,8 @@ package com.group12.syde362.checkout;
 public class ProductListItem {
 
     private String itemName;
-    private String itemWeight;
-    private String itemPrice;
+    private double itemWeight;
+    private double itemPrice;
 
 
     public String getItemTitle(){
@@ -21,7 +21,19 @@ public class ProductListItem {
     public ProductListItem(String name, String weight, String price){
 
         this.itemName = name;
-        this.itemWeight = weight;
-        this.itemPrice = price;
+        this.itemWeight = Double.parseDouble(weight);
+        this.itemPrice = Double.parseDouble(price);
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public double getItemPrice() {
+        return itemPrice;
+    }
+
+    public double getItemWeight() {
+        return itemWeight;
     }
 }
