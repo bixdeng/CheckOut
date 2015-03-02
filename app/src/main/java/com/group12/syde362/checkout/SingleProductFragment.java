@@ -102,7 +102,7 @@ public class SingleProductFragment extends Fragment {
 
         singleProductName.setText("Name: " + bundle.getString(ARG_NAME));
         singleProductPrice.setText("Price: $" + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT) + " kg");
+        singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT) + "kg");
 
         Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new OnClickListener() {

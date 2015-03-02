@@ -5,7 +5,7 @@
     tools:context="com.group12.syde362.checkout.ProductFragment">
 
     <ListView android:id="@android:id/list" android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="483dp" />
 
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center" />
@@ -23,15 +23,20 @@
         android:text="Confirm and Pay"
         android:id="@+id/getBtn"
         android:layout_gravity="right|bottom"
-        android:onClick="getWeight"/>
+        android:onClick="getWeight"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Unverified"
+        android:text="Wrong Weight"
         android:id="@+id/weightVerify"
-        android:layout_gravity="center" />
+        android:layout_gravity="left|bottom"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="20dp"
+        android:textColor="#B20000" />
 
 
 </FrameLayout>

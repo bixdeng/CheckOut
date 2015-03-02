@@ -2,6 +2,7 @@ package com.group12.syde362.checkout;
 
 import android.app.Activity;
 //import android.app.FragmentManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageButton;
 
 
 import com.group12.syde362.checkout.dummy.DummyContent;
@@ -68,6 +70,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     private String mParam2;
     private double totalWeight = 0.0;
     private double totalPrice = 0.0;
+    private double errorRoom = 1;
 
     private List productList = new ArrayList();
     private OnFragmentInteractionListener mListener;
@@ -109,7 +112,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         //productList.add(new ProductListItem("Coconut"));
         //productList.add(new ProductListItem("Dragonfruit"));
         mAdapter = new ProductListAdapter(getActivity(), productList);
-
+        //addListenerOnRemove();
 
         /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -121,6 +124,23 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                 android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);*/
 
     }
+
+//    private void addListenerOnRemove() {
+//        //ImageButton removeButton = (ImageButton) getView().findViewById(R.id.removeButton);
+//        View.OnClickListener listenerDel = new View.OnClickListener() {
+//        };
+//
+//        ImageButton removeButton = (ImageButton) getView().findViewById(R.id.removeButton);
+//        removeButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View arg0) {
+//                int pos = (int) arg0.getTag();
+//                productList.remove(pos);
+//            }
+//        });
+//
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -290,7 +310,10 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                         Log.d("WEIGHT: ", "measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
                         System.out.println("measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
                         TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
-                                verifyLabel.setText("Verified!");
+                        if (weight <= totalWeight + errorRoom && weight >= totalWeight - errorRoom){
+                            verifyLabel.setText("Correct Weight!");
+                            verifyLabel.setTextColor(Color.parseColor("#008000"));
+                        }
                         // creating new HashMap
                         HashMap<String, Double> map = new HashMap<String, Double>();
 
