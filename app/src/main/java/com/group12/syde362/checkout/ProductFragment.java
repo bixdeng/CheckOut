@@ -298,22 +298,37 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                     products = json.getJSONArray(TAG_PRODUCTS);
 
                     // looping through All Products
-                    for (int i = 0; i < products.length(); i++) {
-                        JSONObject c = products.getJSONObject(i);
+                    JSONObject lastReading = products.getJSONObject(products.length() - 1);
+                    //for (int i = 0; i < products.length(); i++) {
+                        //JSONObject c = products.getJSONObject(i);
+
 
                         // Storing each json item in variable
-                        double id = c.getDouble(TAG_PID);
-                        double weight = c.getDouble(TAG_WEIGHT);
+                        double id = lastReading.getDouble(TAG_PID);
+                        final double weight = lastReading.getDouble(TAG_WEIGHT);
+                        //double id = c.getDouble(TAG_PID);
+                        //final double weight = c.getDouble(TAG_WEIGHT);
 
 /*                        TextView getText = (TextView) getView().findViewById(R.id.getTxt);
                         getText.setText(String.valueOf(weight));*/
                         Log.d("WEIGHT: ", "measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
                         System.out.println("measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
-                        TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
-                        if (weight <= totalWeight + errorRoom && weight >= totalWeight - errorRoom){
-                            verifyLabel.setText("Correct Weight!");
-                            verifyLabel.setTextColor(Color.parseColor("#008000"));
-                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
+                                if (weight <= totalWeight + errorRoom && weight >= totalWeight - errorRoom){
+                                    verifyLabel.setText("Correct Weight!");
+                                    verifyLabel.setTextColor(Color.parseColor("#008000"));
+                                }
+                                else{
+                                    verifyLabel.setText("Wrong Weight!");
+                                    verifyLabel.setTextColor(Color.parseColor("#B20000"));
+                                }
+                            }
+                        });
+
                         // creating new HashMap
                         HashMap<String, Double> map = new HashMap<String, Double>();
 
@@ -324,7 +339,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                         // adding HashList to ArrayList
                         productsList.add(map);
                     }
-                }
+               // }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Wrong Weight"
+        android:text="Unverified"
         android:id="@+id/weightVerify"
         android:layout_gravity="left|bottom"
         android:layout_marginLeft="15dp"
