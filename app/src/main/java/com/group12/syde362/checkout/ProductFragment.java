@@ -203,30 +203,48 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
         final int removingPosition = position;
-        if(swipeDetector.swipeDetected() && swipeDetector.getAction().name() == "RL") {
-            Log.d("swipe", "SWIPE IS DETECTED");
-            Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_left);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
+        final Animation leftAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_left);
+        final Animation rightAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_right);
+        if(swipeDetector.swipeDetected()) {
+            if (swipeDetector.getAction().name() == "RL") {
+                leftAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
 
-                }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        productList.remove(removingPosition);
+                        ((ProductListAdapter) mAdapter).notifyDataSetChanged();
+                    }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    productList.remove(removingPosition);
-                    ((ProductListAdapter) mAdapter).notifyDataSetChanged();
-                }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+                view.startAnimation(leftAnimation);
+            }
+            if (swipeDetector.getAction().name() == "LR") {
+                rightAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        productList.remove(removingPosition);
+                        ((ProductListAdapter) mAdapter).notifyDataSetChanged();
+                    }
 
-                }
-            });
-            view.startAnimation(animation);
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+                view.startAnimation(rightAnimation);
 
+            }
         }
 
         /*if (null != mListener) {
