@@ -37,7 +37,8 @@ import android.os.AsyncTask;
 
 public class MainActivity extends ActionBarActivity
 
-    implements NavigationDrawerFragment.NavigationDrawerCallbacks,ProductFragment.OnFragmentInteractionListener, SingleProductFragment.OnFragmentInteractionListener{
+    implements NavigationDrawerFragment.NavigationDrawerCallbacks,ProductFragment.OnFragmentInteractionListener,
+        SingleProductFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -324,6 +325,13 @@ public class MainActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.e("Setting", "Setting button");
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SettingsFragment settingsFragment = new SettingsFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, settingsFragment)
+                        .commit();
+
             return true;
         }
 
