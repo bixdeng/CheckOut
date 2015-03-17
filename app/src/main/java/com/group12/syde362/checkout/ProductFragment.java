@@ -2,6 +2,8 @@ package com.group12.syde362.checkout;
 
 import android.app.Activity;
 //import android.app.FragmentManager;
+import android.content.Context;
+import android.gesture.GestureOverlayView;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,9 +11,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,6 +56,13 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import static android.view.GestureDetector.*;
+
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -58,7 +72,7 @@ import android.util.Log;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnDragListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -74,6 +88,9 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     private List productList = new ArrayList();
     private OnFragmentInteractionListener mListener;
+    SwipeDetector swipeDetector = new SwipeDetector();
+
+
 
     /**
      * The fragment's ListView/GridView.
@@ -162,6 +179,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        mListView.setOnTouchListener(swipeDetector);
 
         return view;
     }
@@ -186,21 +204,55 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final int removingPosition = position;
+        if(swipeDetector.swipeDetected() && swipeDetector.getAction().name() == "RL") {
+            Log.d("swipe", "SWIPE IS DETECTED");
+            Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_left);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    productList.remove(removingPosition);
+                    ((ProductListAdapter) mAdapter).notifyDataSetChanged();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            view.startAnimation(animation);
+
+        }
+
         /*if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }*/
-        ProductListItem item = (ProductListItem) this.productList.get(position);
+        else {
+            ProductListItem item = (ProductListItem) this.productList.get(position);
 
-        //SingleProductFragment singleProductFrag = new SingleProductFragment();
-        android.support.v4.app.FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        SingleProductFragment matchingItem = findMatchingSingleProductFragment(fm.getFragments(), item.getItemTitle());
+            //SingleProductFragment singleProductFrag = new SingleProductFragment();
+            android.support.v4.app.FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            SingleProductFragment matchingItem = findMatchingSingleProductFragment(fm.getFragments(), item.getItemTitle());
 
-        ft.replace(R.id.container, matchingItem).addToBackStack("tag");
-        ft.commit();
+            ft.replace(R.id.container, matchingItem).addToBackStack("tag");
+            ft.commit();
+        }
     }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        return false;
+    }
+
+
 
     /**
      * The default content for this Fragment has a TextView that is shown when
@@ -415,4 +467,5 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     public double getTotalPrice(){
         return totalPrice;
     }
+
 }

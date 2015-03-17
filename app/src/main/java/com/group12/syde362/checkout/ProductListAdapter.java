@@ -63,4 +63,9 @@ public class ProductListAdapter extends ArrayAdapter{
         holder.titleText.setText(item.getItemTitle());
         return viewToUse;
     }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
 }

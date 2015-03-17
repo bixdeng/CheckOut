@@ -1,5 +1,7 @@
 package com.group12.syde362.checkout;
 
+import android.view.View;
+
 /**
  * Created by Bix Deng on 2/25/2015.
  */
@@ -36,4 +38,6 @@ public class ProductListItem {
     public double getItemWeight() {
         return itemWeight;
     }
+
+
 }
