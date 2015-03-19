@@ -38,7 +38,7 @@ import android.os.AsyncTask;
 public class MainActivity extends ActionBarActivity
 
     implements NavigationDrawerFragment.NavigationDrawerCallbacks,ProductFragment.OnFragmentInteractionListener,
-        SingleProductFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener{
+        SingleProductFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener, SingleProductDescrFragment.OnFragmentInteractionListener{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.

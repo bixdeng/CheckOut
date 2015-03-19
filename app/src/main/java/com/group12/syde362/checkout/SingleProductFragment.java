@@ -32,6 +32,7 @@ public class SingleProductFragment extends Fragment {
     private static final String ARG_NAME = "param1";
     private static final String ARG_WEIGHT = "param2";
     private static final String ARG_PRICE = "param3";
+    private static final String ARG_QUANTITY = "1";
 
 
 
@@ -39,6 +40,7 @@ public class SingleProductFragment extends Fragment {
     private String weight;
     private String name;
     private String price;
+    private Integer quantity = 1;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,8 +66,8 @@ public class SingleProductFragment extends Fragment {
             args.putString(ARG_NAME, tempName);
             args.putString(ARG_WEIGHT, tempWeight);
             args.putString(ARG_PRICE, tempPrice);
+            args.putInt(ARG_QUANTITY, 1);
             fragment.setArguments(args);
-
         }
         catch (JSONException e) {
         }
@@ -84,7 +86,7 @@ public class SingleProductFragment extends Fragment {
             name = getArguments().getString(ARG_NAME);
             weight = getArguments().getString(ARG_WEIGHT);
             price = getArguments().getString(ARG_PRICE);
-
+            quantity = getArguments().getInt(ARG_QUANTITY);
         }
     }
 
@@ -92,17 +94,23 @@ public class SingleProductFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
+        final View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
 
         TextView singleProductPrice = (TextView) singleProductView.findViewById(R.id.singleProductPrice);
         TextView singleProductWeight = (TextView) singleProductView.findViewById(R.id.singleProductWeight);
         TextView singleProductName = (TextView) singleProductView.findViewById(R.id.singleProductName);
+        final TextView updatingQuantity = (TextView) singleProductView.findViewById(R.id.updatingQuantity);
+
+        Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
+        Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
 
         Bundle bundle = getArguments();
 
-        singleProductName.setText("Name: " + bundle.getString(ARG_NAME));
-        singleProductPrice.setText("Price: $" + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText("Weight: " + bundle.getString(ARG_WEIGHT) + "kg");
+        singleProductName.setText(bundle.getString(ARG_NAME));
+        singleProductPrice.setText("$" + bundle.getString(ARG_PRICE));
+        singleProductWeight.setText(bundle.getString(ARG_WEIGHT) + "kg");
+        ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).setText(String.valueOf(quantity));
+
 
         Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new OnClickListener() {
@@ -124,12 +132,30 @@ public class SingleProductFragment extends Fragment {
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
-                addItemToList();
+                quantity = (Integer.parseInt((String) ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).getText()));
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
-                ft.replace(R.id.container, itemListFragment);
+                addItemToList();
+                ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment());
                 ft.commit();
+            }
+        });
+
+        quantityMinus.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
+                Integer newQuantity = current - 1;
+                updatingQuantity.setText(String.valueOf(newQuantity));
+            }
+        });
+
+        quantityPlus.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
+                Integer newQuantity = current + 1;
+                updatingQuantity.setText(String.valueOf(newQuantity));
             }
         });
 
@@ -177,12 +203,23 @@ public class SingleProductFragment extends Fragment {
     }
 
     public void addItemToList(){
-        ProductListItem item = new ProductListItem(this.name, this.weight, this.price);
+
+
+        ProductListItem item = new ProductListItem(this.name, this.weight, this.price, this.quantity);
         //Fragment itemListFragment = this.getActivity().getSupportFragmentManager().findFragmentById(R.id.);
         System.out.println("new item: " + item);
+        System.out.println("new item quantity: " + quantity);
+
         ((MainActivity)getActivity()).getItemListFragment().getProductList().add(item);
-        ((MainActivity)getActivity()).getItemListFragment().updateTotalWeight(item);
-        ((MainActivity)getActivity()).getItemListFragment().updateTotalPrice(item);
+        ((MainActivity)getActivity()).getItemListFragment().updateTotalWeight(item, quantity);
+        ((MainActivity)getActivity()).getItemListFragment().updateTotalPrice(item, quantity);
+
+        SingleProductDescrFragment itemDescr = SingleProductDescrFragment.newInstance(this.name, this.price, this.weight, this.quantity);
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container, itemDescr);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     public String getName(){

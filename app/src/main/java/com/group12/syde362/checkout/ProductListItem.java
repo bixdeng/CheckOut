@@ -10,6 +10,8 @@ public class ProductListItem {
     private String itemName;
     private double itemWeight;
     private double itemPrice;
+    private int itemQuantity;
+
 
 
     public String getItemTitle(){
@@ -20,11 +22,12 @@ public class ProductListItem {
         this.itemName = itemName;
     }
 
-    public ProductListItem(String name, String weight, String price){
+    public ProductListItem(String name, String weight, String price, Integer quantity){
 
         this.itemName = name;
         this.itemWeight = Double.parseDouble(weight);
         this.itemPrice = Double.parseDouble(price);
+        this.itemQuantity = quantity;
     }
 
     public String getItemName() {
@@ -37,6 +40,10 @@ public class ProductListItem {
 
     public double getItemWeight() {
         return itemWeight;
+    }
+
+    public int getItemQuantity() {
+        return itemQuantity;
     }
 
 

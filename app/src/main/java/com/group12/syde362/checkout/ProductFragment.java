@@ -79,6 +79,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -90,11 +91,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     private OnFragmentInteractionListener mListener;
     SwipeDetector swipeDetector = new SwipeDetector();
 
-
-
-    /**
-     * The fragment's ListView/GridView.
-     */
+    TextView totalPriceLabel;
     private AbsListView mListView;
 
     /**
@@ -162,7 +159,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_product, container, false);
+        View view = inflater.inflate(R.layout.fragment_product_list, container, false);
 
         Button button = (Button) view.findViewById(R.id.getBtn);
         button.setOnClickListener(new View.OnClickListener() {
@@ -175,12 +172,14 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
+        totalPriceLabel = (TextView) view.findViewById(R.id.totalPrice);
+        totalPriceLabel.setText("$ 0");
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
         mListView.setOnTouchListener(swipeDetector);
-
+        updateTotalPriceLabel();
         return view;
     }
 
@@ -247,19 +246,20 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
             }
         }
 
+        onItem
+
         /*if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }*/
-        else {
+        else { //if it is only touch action
             ProductListItem item = (ProductListItem) this.productList.get(position);
 
             //SingleProductFragment singleProductFrag = new SingleProductFragment();
             android.support.v4.app.FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            SingleProductFragment matchingItem = findMatchingSingleProductFragment(fm.getFragments(), item.getItemTitle());
-
+            SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
             ft.replace(R.id.container, matchingItem).addToBackStack("tag");
             ft.commit();
         }
@@ -455,28 +455,53 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         return productList;
     }
 
-    public SingleProductFragment findMatchingSingleProductFragment(List<Fragment> loFragments, String itemName){
+    public SingleProductDescrFragment findMatchingSingleProductDescrFragment(List<Fragment> loFragments, String itemName, Integer position){
+        SingleProductDescrFragment matchedItemInfo;
         for (int i = 0; i < loFragments.size(); i++) {
-            if(loFragments.get(i) instanceof SingleProductFragment){
-                SingleProductFragment matchedItemInfo = (SingleProductFragment) loFragments.get(i);
+            if(loFragments.get(i) instanceof SingleProductDescrFragment){
+                matchedItemInfo = (SingleProductDescrFragment) loFragments.get(i);
                 if (matchedItemInfo.getName().equals(itemName)){
+                    matchedItemInfo.setListPosition(position);
                     return matchedItemInfo;
                 }
             }
         }
+
         return null;
     }
 
-    public void updateTotalWeight(ProductListItem newItem){
-        totalWeight = totalWeight + newItem.getItemWeight();
+    public void updateTotalWeight(ProductListItem newItem, Integer quantity){
+        totalWeight = totalWeight + (quantity * newItem.getItemWeight());
+        Log.d("total weight is: ", ""+totalWeight);
         return;
 
     }
 
-    public void updateTotalPrice(ProductListItem newItem){
-        totalPrice = totalPrice + newItem.getItemPrice();
-        return;
+    public void updateTotalPrice(ProductListItem newItem, Integer quantity){
+        totalPrice = totalPrice + (quantity * newItem.getItemPrice());
+        String totalPriceRounded = String.format("%.2f", totalPrice);
+        //((MainActivity) getActivity()).getItemListFragment().totalPriceLabel.setText(("$ " + totalPriceRounded));
+        //((TextView) getView().findViewById(R.id.totalPrice)).setText(String.valueOf(totalPrice));
+        String label;
+        label = (String) this.totalPriceLabel.getText();
+        Log.d("total price is: ", ""+totalPrice);
     }
+
+    private void updateTotalPriceLabel() {
+        String totalPriceRounded = String.format("%.2f", totalPrice);
+        totalPriceLabel.setText(("$ " + totalPriceRounded));
+        Log.d("total price rounded: ", totalPriceRounded);
+    }
+
+    public void subtractFromTotalWeight(Integer quantity, String weight) {
+        totalWeight = totalWeight - (quantity * Double.valueOf(weight));
+    }
+
+    public void subtractFromTotalPrice(Integer quantity, String price) {
+        totalPrice = totalPrice - (quantity * Double.valueOf(price));
+        updateTotalPriceLabel();
+    }
+
 
     public double getTotalWeight(){
         return totalWeight;

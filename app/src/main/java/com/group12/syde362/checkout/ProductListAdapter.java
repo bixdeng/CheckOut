@@ -27,6 +27,7 @@ public class ProductListAdapter extends ArrayAdapter{
      */
     private class ViewHolder{
         TextView titleText;
+        TextView quantityText;
     }
 
     /**
@@ -54,6 +55,7 @@ public class ProductListAdapter extends ArrayAdapter{
 
             holder = new ViewHolder();
             holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
+            holder.quantityText = (TextView)viewToUse.findViewById(R.id.listItemQuantity);
             viewToUse.setTag(holder);
         } else {
             viewToUse = convertView;
@@ -61,6 +63,8 @@ public class ProductListAdapter extends ArrayAdapter{
         }
 
         holder.titleText.setText(item.getItemTitle());
+        holder.quantityText.setText(String.valueOf(item.getItemQuantity()));
+
         return viewToUse;
     }
 
