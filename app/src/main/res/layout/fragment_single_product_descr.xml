@@ -1,0 +1,116 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/single_product_fragment"
+    tools:context="com.group12.syde362.checkout.SingleProductDescrFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Item"
+        android:id="@+id/updateButton"
+        android:layout_alignTop="@+id/cancelButton"
+        android:layout_toRightOf="@+id/singleProductPrice"
+        android:layout_toEndOf="@+id/singleProductPrice"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="right|bottom" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Name"
+        android:id="@+id/singleProductNameDescr"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentTop="true"
+        android:textSize="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Price"
+        android:id="@+id/singleProductPriceDescr"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/singleProductWeight"
+        android:layout_alignLeft="@+id/singleProductWeight"
+        android:layout_alignStart="@+id/singleProductWeight"
+        android:layout_marginTop="200dp"
+        android:textSize="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Quantity: "
+        android:id="@+id/quantityDescr"
+        android:layout_gravity="left|center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/singleProductPrice"
+        android:layout_alignLeft="@+id/singleProductPrice"
+        android:layout_marginTop="150dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="40dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Weight"
+        android:id="@+id/singleProductWeightDescr"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_below="@+id/singleProductName"
+        android:layout_toLeftOf="@+id/numberPicker"
+        android:layout_toStartOf="@+id/numberPicker"
+        android:layout_marginTop="300dp"
+        android:textSize="30dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/cancelButtonDescr"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/singleProductPriceDescr"
+        android:layout_marginBottom="20dp"
+        android:layout_alignRight="@+id/quantity"
+        android:layout_alignEnd="@+id/quantity"
+        android:layout_gravity="left|bottom" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="-"
+        android:id="@+id/minusDescr"
+        android:layout_gravity="center"
+        android:layout_marginTop="120dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="+"
+        android:id="@+id/plusDescr"
+        android:layout_gravity="center"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="120dp" />
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="1"
+        android:id="@+id/updatingQuantityDescr"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="120dp" />
+
+
+</FrameLayout>
