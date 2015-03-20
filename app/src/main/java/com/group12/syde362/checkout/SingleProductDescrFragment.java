@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,8 +83,10 @@ public class SingleProductDescrFragment extends Fragment{
         final TextView totalProductPrice = (TextView) singleProductDescrView.findViewById(R.id.totalProductPriceDescr);
 
 
-        Button quantityMinus = (Button) singleProductDescrView.findViewById(R.id.minusDescr);
-        Button quantityPlus = (Button) singleProductDescrView.findViewById(R.id.plusDescr);
+        final Button quantityMinus = (Button) singleProductDescrView.findViewById(R.id.minusDescr);
+        final Button quantityPlus = (Button) singleProductDescrView.findViewById(R.id.plusDescr);
+        final Animation buttonAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.button_pressed);
+
 
         singleProductName.setText(name);
         singleProductPrice.setText("$" + String.valueOf(price));
@@ -133,9 +137,11 @@ public class SingleProductDescrFragment extends Fragment{
             public void onClick(View v) {
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 if (current <= 1){
+                    quantityMinus.startAnimation(buttonAnim);
                     updatingQuantity.setText(String.valueOf(1));
                 }
                 else{
+                    quantityMinus.startAnimation(buttonAnim);
                     Integer newQuantity = current - 1;
                     updatingQuantity.setText(String.valueOf(newQuantity));
                     totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
@@ -147,6 +153,7 @@ public class SingleProductDescrFragment extends Fragment{
         quantityPlus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                quantityPlus.startAnimation(buttonAnim);
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 Integer newQuantity = current + 1;
                 updatingQuantity.setText(String.valueOf(newQuantity));

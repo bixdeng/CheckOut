@@ -117,7 +117,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:background="@drawable/add_to_list_button"
-        android:text="+"
+        android:text="●"
         android:id="@+id/updateButton"
         android:layout_alignTop="@+id/cancelButton"
         android:layout_toRightOf="@+id/singleProductPrice"

@@ -117,7 +117,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:background="@drawable/add_to_list_button"
-        android:text="+"
+        android:text="►"
         android:id="@+id/addButton"
         android:layout_alignTop="@+id/cancelButton"
         android:layout_toRightOf="@+id/singleProductPrice"
@@ -125,7 +125,7 @@
         android:layout_marginBottom="30dp"
         android:layout_gravity="right|bottom"
         android:textColor="@color/White"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:layout_marginRight="20dp" />
 
     <Button

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,8 +106,9 @@ public class SingleProductFragment extends Fragment {
         final TextView totalProductPrice = (TextView) singleProductView.findViewById(R.id.totalProductPrice);
 
 
-        Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
-        Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
+        final Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
+        final Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
+        final Animation buttonAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.button_pressed);
 
         Bundle bundle = getArguments();
 
@@ -116,7 +119,7 @@ public class SingleProductFragment extends Fragment {
         ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).setText(String.valueOf(quantity));
 
 
-        Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
+        final Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
@@ -132,7 +135,7 @@ public class SingleProductFragment extends Fragment {
             }
         });
 
-        Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
+        final Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
@@ -150,20 +153,23 @@ public class SingleProductFragment extends Fragment {
             public void onClick(View v) {
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 if (current <= 1){
+                    quantityMinus.startAnimation(buttonAnim);
                     updatingQuantity.setText(String.valueOf(1));
-
                 }
                 else{
                     Integer newQuantity = current - 1;
+                    quantityMinus.startAnimation(buttonAnim);
                     updatingQuantity.setText(String.valueOf(newQuantity));
-                    totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
+                    totalProductPrice.setText("$" + String.valueOf(String.format("%.2f", calcTotalPrice(newQuantity, price))));
                 }
+
             }
         });
 
         quantityPlus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                quantityPlus.startAnimation(buttonAnim);
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 Integer newQuantity = current + 1;
                 updatingQuantity.setText(String.valueOf(newQuantity));
