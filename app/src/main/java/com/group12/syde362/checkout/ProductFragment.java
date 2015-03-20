@@ -164,7 +164,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_list, container, false);
 
-        Button button = (Button) view.findViewById(R.id.getBtn);
+        ImageButton button = (ImageButton) view.findViewById(R.id.getBtn);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -176,7 +176,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         totalPriceLabel = (TextView) view.findViewById(R.id.totalPrice);
-        totalPriceLabel.setText("$ 0");
+        totalPriceLabel.setText("$0");
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -499,7 +499,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     private void updateTotalPriceLabel() {
         String totalPriceRounded = String.format("%.2f", totalPrice);
-        totalPriceLabel.setText(("$ " + totalPriceRounded));
+        totalPriceLabel.setText(("$" + totalPriceRounded));
         Log.d("total price rounded: ", totalPriceRounded);
     }
 
@@ -513,7 +513,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     }
 
 
-    private void removeItemFromList(int removingPosition) {
+    public void removeItemFromList(int removingPosition) {
         ProductListItem removingItem = (ProductListItem) productList.get(removingPosition);
         Double removingItemPrice = removingItem.getItemPrice();
         Integer removingItemQuantity = removingItem.getItemQuantity();
@@ -532,8 +532,14 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         ft.commit();
         productList.remove(removingPosition);
         ((ProductListAdapter) mAdapter).notifyDataSetChanged();
+    }
 
-
+    public void removeSingleFragment(String name) {
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment matchingItem = (Fragment) findMatchingSingleProductFragment(fm.getFragments(), name);
+        fm.getFragments().remove(matchingItem);
+        ft.commit();
     }
 
 

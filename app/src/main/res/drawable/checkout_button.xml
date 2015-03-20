@@ -23,7 +23,7 @@
             <item>
                 <shape android:shape="oval">
                     <solid
-                        android:color="#E91E63"/>
+                        android:color="#009688"/>
                     <corners
                         android:radius="10dp" />
                     <size

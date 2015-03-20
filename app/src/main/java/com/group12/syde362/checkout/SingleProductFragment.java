@@ -41,6 +41,7 @@ public class SingleProductFragment extends Fragment {
     private String name;
     private String price;
     private Integer quantity = 1;
+    private Double totalPrice;
 
     private OnFragmentInteractionListener mListener;
 
@@ -100,6 +101,8 @@ public class SingleProductFragment extends Fragment {
         TextView singleProductWeight = (TextView) singleProductView.findViewById(R.id.singleProductWeight);
         TextView singleProductName = (TextView) singleProductView.findViewById(R.id.singleProductName);
         final TextView updatingQuantity = (TextView) singleProductView.findViewById(R.id.updatingQuantity);
+        final TextView totalProductPrice = (TextView) singleProductView.findViewById(R.id.totalProductPrice);
+
 
         Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
         Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
@@ -108,7 +111,8 @@ public class SingleProductFragment extends Fragment {
 
         singleProductName.setText(bundle.getString(ARG_NAME));
         singleProductPrice.setText("$" + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText(bundle.getString(ARG_WEIGHT) + "kg");
+        singleProductWeight.setText("" + bundle.getString(ARG_WEIGHT) + "kg");
+        totalProductPrice.setText("$" + bundle.getString(ARG_PRICE));
         ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).setText(String.valueOf(quantity));
 
 
@@ -124,7 +128,7 @@ public class SingleProductFragment extends Fragment {
                 ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
                 ft.replace(R.id.container, itemListFragment);
                 ft.commit();
-
+                itemListFragment.removeSingleFragment(name);
             }
         });
 
@@ -147,10 +151,12 @@ public class SingleProductFragment extends Fragment {
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 if (current <= 1){
                     updatingQuantity.setText(String.valueOf(1));
+
                 }
                 else{
                     Integer newQuantity = current - 1;
                     updatingQuantity.setText(String.valueOf(newQuantity));
+                    totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
                 }
             }
         });
@@ -161,6 +167,7 @@ public class SingleProductFragment extends Fragment {
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 Integer newQuantity = current + 1;
                 updatingQuantity.setText(String.valueOf(newQuantity));
+                totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
             }
         });
 
@@ -225,6 +232,14 @@ public class SingleProductFragment extends Fragment {
         ft.replace(R.id.container, itemDescr);
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    public Double calcTotalPrice(Integer quantity, String price){
+
+        Double unitPrice = Double.valueOf(price);
+        Double newTotalPrice = unitPrice * quantity;
+        totalPrice = newTotalPrice;
+        return newTotalPrice;
     }
 
     public String getName(){

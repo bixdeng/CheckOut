@@ -4,9 +4,25 @@
     android:layout_height="match_parent"
     tools:context="com.group12.syde362.checkout.ProductFragment">
 
-    <ListView android:id="@android:id/list" android:layout_width="match_parent"
-        android:layout_height="425dp" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="435dp">
+        <ListView android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/White"
+        />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="5dp"
+            android:background="#55000000"
+            android:layout_gravity="bottom"
+            android:backgroundTint="@color/Black"
+            android:backgroundTintMode="multiply"
+            />
 
+    </FrameLayout>
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center" />
 
@@ -17,15 +33,42 @@
         android:id="@+id/getTxt"
         android:layout_gravity="center_horizontal|bottom" />
 
-    <Button
+    <ImageButton
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/cart"
+        android:id="@+id/getBtn"
+        android:background="@drawable/checkout_button"
+        android:layout_gravity="right|bottom"
+        android:layout_toRightOf="@+id/totalPrice"
+        android:onClick="getWeight"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:layout_width="133dp"
+        android:layout_height="60dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="$ 00.00"
+        android:id="@+id/totalPrice"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="40dp"
+        android:textSize="40dp"
+        android:gravity="right"
+        android:layout_toRightOf="@+id/subTotal"
+        android:textColor="#212121"
+        android:layout_marginRight="20dp" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Confirm and Pay"
-        android:id="@+id/getBtn"
-        android:layout_gravity="right|bottom"
-        android:onClick="getWeight"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Sub Total:"
+        android:id="@+id/subTotal"
+        android:layout_gravity="left|bottom"
+        android:layout_marginBottom="60dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#212121" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,22 +76,9 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Unverified"
         android:id="@+id/weightVerify"
-        android:layout_gravity="left|bottom"
-        android:layout_marginLeft="15dp"
+        android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="20dp"
         android:textColor="#B20000" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/totalPrice"
-        android:layout_gravity="right|bottom"
-        android:layout_marginBottom="70dp"
-        android:layout_marginRight="10dp"
-        android:textSize="40dp"
-        android:gravity="right" />
 
 
 </FrameLayout>

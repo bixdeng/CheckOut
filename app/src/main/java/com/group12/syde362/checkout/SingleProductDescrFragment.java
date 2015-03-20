@@ -34,6 +34,7 @@ public class SingleProductDescrFragment extends Fragment{
     private String price;
     private Integer quantity = 1;
     private Integer listPosition = 0;
+    private Double totalPrice;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,6 +65,7 @@ public class SingleProductDescrFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        calcTotalPrice(quantity, price);
     }
 
     @Override
@@ -76,6 +78,8 @@ public class SingleProductDescrFragment extends Fragment{
         TextView singleProductWeight = (TextView) singleProductDescrView.findViewById(R.id.singleProductWeightDescr);
         TextView singleProductName = (TextView) singleProductDescrView.findViewById(R.id.singleProductNameDescr);
         final TextView updatingQuantity = (TextView) singleProductDescrView.findViewById(R.id.updatingQuantityDescr);
+        final TextView totalProductPrice = (TextView) singleProductDescrView.findViewById(R.id.totalProductPriceDescr);
+
 
         Button quantityMinus = (Button) singleProductDescrView.findViewById(R.id.minusDescr);
         Button quantityPlus = (Button) singleProductDescrView.findViewById(R.id.plusDescr);
@@ -84,6 +88,8 @@ public class SingleProductDescrFragment extends Fragment{
         singleProductPrice.setText("$" + String.valueOf(price));
         singleProductWeight.setText(String.valueOf(weight) + "kg");
         ((TextView) singleProductDescrView.findViewById(R.id.updatingQuantityDescr)).setText(String.valueOf(quantity));
+        totalProductPrice.setText("$" + String.valueOf(String.format("%.2f",totalPrice)));
+
 
 
         Button cancelButton = (Button) singleProductDescrView.findViewById(R.id.cancelButtonDescr);
@@ -132,6 +138,8 @@ public class SingleProductDescrFragment extends Fragment{
                 else{
                     Integer newQuantity = current - 1;
                     updatingQuantity.setText(String.valueOf(newQuantity));
+                    totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
+
                 }
             }
         });
@@ -142,6 +150,7 @@ public class SingleProductDescrFragment extends Fragment{
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 Integer newQuantity = current + 1;
                 updatingQuantity.setText(String.valueOf(newQuantity));
+                totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
             }
         });
 
@@ -194,6 +203,14 @@ public class SingleProductDescrFragment extends Fragment{
         ((MainActivity)getActivity()).getItemListFragment().updateTotalWeight(updatedListItem, quantity);
         ((MainActivity)getActivity()).getItemListFragment().getProductList().set(listPosition, updatedListItem);
     }
+
+    public Double calcTotalPrice(Integer quantity, String price){
+        Double unitPrice = Double.valueOf(String.format("%.2f",Double.valueOf(price)));
+        Double newTotalPrice = unitPrice * quantity;
+        totalPrice = newTotalPrice;
+        return newTotalPrice;
+    }
+
 
     public String getName(){
         return name;

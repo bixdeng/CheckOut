@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- http://www.dibbus.com/2011/02/gradient-buttons-for-android/ -->
+
+
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="oval">
-            <solid
-                android:color="#009688"/>
-            <corners
-                android:radius="10dp" />
-            <size
-                android:height="50dp"
-                android:width="50dp"/>
-        </shape>
-    </item>
+
+    <item android:drawable="@drawable/add_to_list_button_pressed" android:state_selected="true"></item>
+    <item android:drawable="@drawable/add_to_list_button_pressed" android:state_pressed="true"></item>
+    <item android:drawable="@drawable/add_to_list_button_normal"></item>
+
 </selector>
+
+
