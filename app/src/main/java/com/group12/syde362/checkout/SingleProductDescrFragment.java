@@ -126,8 +126,13 @@ public class SingleProductDescrFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
-                Integer newQuantity = current - 1;
-                updatingQuantity.setText(String.valueOf(newQuantity));
+                if (current <= 1){
+                    updatingQuantity.setText(String.valueOf(1));
+                }
+                else{
+                    Integer newQuantity = current - 1;
+                    updatingQuantity.setText(String.valueOf(newQuantity));
+                }
             }
         });
 

@@ -3,6 +3,7 @@ package com.group12.syde362.checkout;
 import android.app.Activity;
 //import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.gesture.GestureOverlayView;
 import android.graphics.Color;
 import android.net.Uri;
@@ -24,6 +25,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.PopupMenu;
+import android.app.AlertDialog;
 import android.widget.Toast;
 import android.widget.ImageButton;
 
@@ -72,7 +75,7 @@ import android.view.GestureDetector.OnGestureListener;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnDragListener {
+public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnDragListener, AbsListView.OnItemLongClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -178,6 +181,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        mListView.setOnItemLongClickListener(this);
         mListView.setOnTouchListener(swipeDetector);
         updateTotalPriceLabel();
         return view;
@@ -204,73 +208,20 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
         final int removingPosition = position;
-        final Animation leftAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_left);
-        final Animation rightAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_right);
-        if(swipeDetector.swipeDetected()) {
-            if (swipeDetector.getAction().name() == "RL") {
-                leftAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
+        ProductListItem item = (ProductListItem) this.productList.get(position);
+        //SingleProductFragment singleProductFrag = new SingleProductFragment();
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
+        ft.replace(R.id.container, matchingItem).addToBackStack("tag");
+        ft.commit();
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        productList.remove(removingPosition);
-                        ((ProductListAdapter) mAdapter).notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                view.startAnimation(leftAnimation);
-            }
-            if (swipeDetector.getAction().name() == "LR") {
-                rightAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        productList.remove(removingPosition);
-                        ((ProductListAdapter) mAdapter).notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                view.startAnimation(rightAnimation);
-
-            }
-        }
-
-        onItem
-
-        /*if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }*/
-        else { //if it is only touch action
-            ProductListItem item = (ProductListItem) this.productList.get(position);
-
-            //SingleProductFragment singleProductFrag = new SingleProductFragment();
-            android.support.v4.app.FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
-            ft.replace(R.id.container, matchingItem).addToBackStack("tag");
-            ft.commit();
-        }
     }
 
     @Override
     public boolean onDrag(View v, DragEvent event) {
         return false;
     }
-
-
 
     /**
      * The default content for this Fragment has a TextView that is shown when
@@ -283,6 +234,51 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
+    }
+
+    //handler for longclicking list item
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        Log.d("LONG CLICK HANDLER", "EY");
+        final CharSequence [] option = new CharSequence[] { "Remove", "Change Quantity" };
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem_popupmenu, option);
+
+        AlertDialog.Builder itemOptions = new AlertDialog.Builder(getActivity());
+        itemOptions.setTitle("Item Options");
+        itemOptions.setCancelable(true);
+        itemOptions.setItems(option, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int action) {
+                // TODO Auto-generated method stub
+                Log.d("HEY!", "menu option is clicked");
+                if(action == 0){ //if user wants to remove the item from list
+                    removeItemFromList(position);
+                }
+
+                if(action == 1){ //if user wants to update the quantity
+                    ProductListItem item = (ProductListItem) productList.get(position);
+
+                    //SingleProductFragment singleProductFrag = new SingleProductFragment();
+                    android.support.v4.app.FragmentManager fm = getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
+                    ft.replace(R.id.container, matchingItem).addToBackStack("tag");
+                    ft.commit();
+                }
+
+                return;
+            }
+        });
+        /*itemOptions.setAdapter(adapter,new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                Log.d("HEY!", "menu option is clicked");
+             }
+        });*/
+
+        AlertDialog alert11 = itemOptions.create();
+        alert11.show();
+
+        return true;
     }
 
     /**
@@ -455,6 +451,19 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         return productList;
     }
 
+    public SingleProductFragment findMatchingSingleProductFragment(List<Fragment> loFragments, String itemName){
+        SingleProductFragment matchedItemInfo;
+        for (int i = 0; i < loFragments.size(); i++) {
+            if(loFragments.get(i) instanceof SingleProductFragment){
+                matchedItemInfo = (SingleProductFragment) loFragments.get(i);
+                if (matchedItemInfo.getName().equals(itemName)){
+                    return matchedItemInfo;
+                }
+            }
+        }
+
+        return null;
+    }
     public SingleProductDescrFragment findMatchingSingleProductDescrFragment(List<Fragment> loFragments, String itemName, Integer position){
         SingleProductDescrFragment matchedItemInfo;
         for (int i = 0; i < loFragments.size(); i++) {
@@ -469,6 +478,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
         return null;
     }
+
 
     public void updateTotalWeight(ProductListItem newItem, Integer quantity){
         totalWeight = totalWeight + (quantity * newItem.getItemWeight());
@@ -500,6 +510,30 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     public void subtractFromTotalPrice(Integer quantity, String price) {
         totalPrice = totalPrice - (quantity * Double.valueOf(price));
         updateTotalPriceLabel();
+    }
+
+
+    private void removeItemFromList(int removingPosition) {
+        ProductListItem removingItem = (ProductListItem) productList.get(removingPosition);
+        Double removingItemPrice = removingItem.getItemPrice();
+        Integer removingItemQuantity = removingItem.getItemQuantity();
+        Double removingItemWeight = removingItem.getItemWeight();
+
+        subtractFromTotalPrice(removingItemQuantity, String.valueOf(removingItemPrice));
+        subtractFromTotalWeight(removingItemQuantity, String.valueOf(removingItemWeight));
+
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment matchingItem = (Fragment) findMatchingSingleProductFragment(fm.getFragments(), removingItem.getItemTitle());
+        Fragment matchingItemDescr = (Fragment) findMatchingSingleProductDescrFragment(fm.getFragments(), removingItem.getItemTitle(), removingPosition);
+        fm.getFragments().remove(matchingItem);
+        fm.getFragments().remove(matchingItemDescr);
+
+        ft.commit();
+        productList.remove(removingPosition);
+        ((ProductListAdapter) mAdapter).notifyDataSetChanged();
+
+
     }
 
 
