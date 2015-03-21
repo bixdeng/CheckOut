@@ -9,11 +9,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -186,6 +188,8 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         updateTotalPriceLabel();
         return view;
     }
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -550,5 +554,48 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     public double getTotalPrice(){
         return totalPrice;
     }
+
+
+    //setting back button listener on product fragment
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //getView().setFocusableInTouchMode(true);
+        //setOnBackButtonListener();
+    }
+
+//    private void setOnBackButtonListener() {
+//
+//        this.getView().setOnKeyListener( new View.OnKeyListener()
+//        {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction()!=KeyEvent.ACTION_DOWN)
+//                    return true;
+//                if( keyCode == KeyEvent.KEYCODE_BACK )
+//                {
+//                    new AlertDialog.Builder(getActivity())
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .setMessage("Exit CheckedOut?")
+//                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//
+//                                    //Stop the activity
+//                                    getActivity().finish();
+//                                }
+//
+//                            })
+//                            .setNegativeButton("No", null)
+//                            .show();
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        } );
+
+//    }
 
 }

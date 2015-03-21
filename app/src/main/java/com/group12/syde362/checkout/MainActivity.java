@@ -7,7 +7,9 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -303,12 +306,12 @@ public class MainActivity extends ActionBarActivity
 
         if (position+1 == 1){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, itemListFragment)
+                    .replace(R.id.container, itemListFragment, "List")
                     .commit();
         }
         else {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, itemListFragment)
+                    .replace(R.id.container, itemListFragment, "List")
                     .commit();
         }
     }
@@ -422,5 +425,45 @@ public class MainActivity extends ActionBarActivity
     public ProductFragment getItemListFragment(){
         return itemListFragment;
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Handle the back button
+        if (event.getAction()!=KeyEvent.ACTION_DOWN){
+            return true;
+        }
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            Fragment listFragment = fragmentManager.findFragmentByTag("List");
+            if(listFragment.isVisible()){
+                new AlertDialog.Builder(this)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setMessage("Exit CheckedOut?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    //Stop the activity
+                                    MainActivity.this.finish();
+                                }
+
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+
+                    return true;
+            }
+            Log.d("hi","j");
+
+            return true;
+        }
+        else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
 
 }

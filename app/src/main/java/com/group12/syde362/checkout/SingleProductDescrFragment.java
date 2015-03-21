@@ -106,7 +106,7 @@ public class SingleProductDescrFragment extends Fragment{
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
-                ft.replace(R.id.container, itemListFragment);
+                ft.replace(R.id.container, itemListFragment, "List");
                 ft.commit();
             }
         });
@@ -125,7 +125,7 @@ public class SingleProductDescrFragment extends Fragment{
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 updateItemInList();
-                ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment());
+                ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment(), "List");
                 ft.commit();
 
 
