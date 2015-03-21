@@ -14,6 +14,7 @@ import android.os.Bundle;
 //import android.app.Fragment;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,46 +45,47 @@ import java.util.logging.LogRecord;
  * Use the {@link SettingsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends BluetoothHelper {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     /**
      * Called when the activity is first created.
      */
-    ListView listViewPaired;
-    ListView listViewDetected;
-    ArrayList<String> arrayListpaired;
-    Button buttonSearch, buttonOn, buttonDesc, buttonOff, buttonMsg;
-    ArrayAdapter<String> adapter, detectedAdapter;
-    //    static HandleSearch handleSeacrh;
-    BluetoothDevice bdDevice;
-    BluetoothClass bdClass;
-    ArrayList<BluetoothDevice> arrayListPairedBluetoothDevices;
+//  COMMENTED OUT (BluetoothHelper)
+//    ListView listViewPaired;
+//    ListView listViewDetected;
+//    ArrayList<String> arrayListpaired;
+//    Button buttonSearch, buttonOn, buttonOff, buttonWeight;
+//    ArrayAdapter<String> adapter, detectedAdapter;
+//    //    static HandleSearch handleSeacrh;
+//    BluetoothDevice bdDevice;
+//    BluetoothClass bdClass;
+//    ArrayList<BluetoothDevice> arrayListPairedBluetoothDevices;
     private ButtonClicked clicked;
     ListItemClickedOnPaired listItemClickedOnPaired;
-    BluetoothAdapter bluetoothAdapter = null;
-    ArrayList<BluetoothDevice> arrayListBluetoothDevices = null;
+//    BluetoothAdapter bluetoothAdapter = null;
+//    ArrayList<BluetoothDevice> arrayListBluetoothDevices = null;
     ListItemClicked listItemClicked;
     /*
     https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Android/Example/BluetoothArduino.java
      */
-    OutputStream mOut;
-    InputStream mIn;
-    private String TAG = "BluetoothConnector";
-    private BluetoothSocket mBlueSocket = null;
-    private boolean connected = false;
-    BluetoothDevice mDevice;
-    ConnectThread mConnectThread;
-    ConnectedThread mConnectedThread;
-
+//    OutputStream mOut;
+//    InputStream mIn;
+//    private String TAG = "BluetoothConnector";
+//    private BluetoothSocket mBlueSocket = null;
+//    private boolean connected = false;
+//    BluetoothDevice mDevice;
+//    ConnectThread mConnectThread;
+//    ConnectedThread mConnectedThread;
+//
     private OnFragmentInteractionListener mListener;
-
-    // Message types used by the Handler
-    public static final int MESSAGE_WRITE = 1;
-    public static final int MESSAGE_READ = 2;
-    String readMessage = "";
-    SendReceiveBytes sendReceiveBT = null;
+//
+//    // Message types used by the Handler
+//    public static final int MESSAGE_WRITE = 1;
+//    public static final int MESSAGE_READ = 2;
+//    String readMessage = "";
+//    SendReceiveBytes sendReceiveBT = null;
 
     /**
      * Use this factory method to create a new instance of
@@ -111,6 +113,15 @@ public class SettingsFragment extends Fragment {
         if (getArguments() != null) {
         }
 
+        FragmentManager fm = getFragmentManager();
+        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                fm.popBackStack();
+            }
+        });
+
     }
 
     @Override
@@ -122,9 +133,8 @@ public class SettingsFragment extends Fragment {
         listViewPaired = (ListView) view.findViewById(R.id.listViewPaired);
         buttonSearch = (Button) view.findViewById(R.id.buttonSearch);
         buttonOn = (Button) view.findViewById(R.id.buttonOn);
-        buttonDesc = (Button) view.findViewById(R.id.buttonDesc);
         buttonOff = (Button) view.findViewById(R.id.buttonOff);
-        buttonMsg = (Button) view.findViewById(R.id.buttonMsg);
+        buttonWeight = (Button) view.findViewById(R.id.buttonWeight);
         arrayListpaired = new ArrayList<String>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         clicked = new ButtonClicked();
@@ -171,9 +181,8 @@ public class SettingsFragment extends Fragment {
         getPairedDevices();
         buttonOn.setOnClickListener(clicked);
         buttonSearch.setOnClickListener(clicked);
-        buttonDesc.setOnClickListener(clicked);
         buttonOff.setOnClickListener(clicked);
-        buttonMsg.setOnClickListener(clicked);
+        buttonWeight.setOnClickListener(clicked);
         listViewDetected.setOnItemClickListener(listItemClicked);
         listViewPaired.setOnItemClickListener(listItemClickedOnPaired);
         if (mDevice != null) {
@@ -193,169 +202,171 @@ public class SettingsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
-        final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
-        public ConnectThread(BluetoothDevice device) {
-            Log.i("ConnectThread", "Started");
-            BluetoothSocket tmp = null;
-            mmDevice = device;
-            try {
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            } catch (IOException e) {
-            }
-            mmSocket = tmp;
-        }
+//    /*
+//    Connecting with Arduino via Bluetooth
+//     */
+//    private class ConnectThread extends Thread {
+//        private final BluetoothSocket mmSocket;
+//        private final BluetoothDevice mmDevice;
+//        final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+//
+//        public ConnectThread(BluetoothDevice device) {
+//            Log.i("ConnectThread", "Started");
+//            BluetoothSocket tmp = null;
+//            mmDevice = device;
+//            try {
+//                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+//            } catch (IOException e) {
+//            }
+//            mmSocket = tmp;
+//        }
+//
+//        public BluetoothSocket getSocket(){
+//            return mmSocket;
+//        }
+//
+//        public void run() {
+//            Log.i("ConnectThread", "Ran");
+//            bluetoothAdapter.cancelDiscovery();
+//            try {
+//                mmSocket.connect();
+//            } catch (IOException connectException) {
+//                try {
+//                    mmSocket.close();
+//                } catch (IOException closeException) {
+//                }
+//                return;
+//            }
+////            mConnectedThread = new ConnectedThread(mmSocket);
+////            mConnectedThread.start();
+//        }
+//
+//        public void cancel() {
+//            try {
+//                mmSocket.close();
+//            } catch (IOException e) {
+//            }
+//        }
+//    }
 
-        public BluetoothSocket getSocket(){
-            return mmSocket;
-        }
-
-        public void run() {
-            Log.i("ConnectThread", "Ran");
-            bluetoothAdapter.cancelDiscovery();
-            try {
-                mmSocket.connect();
-            } catch (IOException connectException) {
-                try {
-                    mmSocket.close();
-                } catch (IOException closeException) {
-                }
-                return;
-            }
-//            mConnectedThread = new ConnectedThread(mmSocket);
-//            mConnectedThread.start();
-        }
-
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-            }
-        }
-    }
-
-
-//    Handler mHandler = new Handler() {
+//    /*
+//    http://stackoverflow.com/questions/23540754/send-data-from-arduino-to-android-app-via-bluetooth
+//     */
+//    // The Handler that gets information back from the Socket
+//    private final Handler mHandler = new Handler() {
 //        @Override
 //        public void handleMessage(Message msg) {
-//            byte[] writeBuf = (byte[]) msg.obj;
-//            int begin = (int)msg.arg1;
-//            int end = (int)msg.arg2;
-//
-//            switch(msg.what) {
-//                case 1:
-//                    String writeMessage = new String(writeBuf);
-//                    writeMessage = writeMessage.substring(begin, end);
+//            switch (msg.what) {
+//                case MESSAGE_WRITE:
+//                    //Do something when writing
+//                    break;
+//                case MESSAGE_READ:
+//                    //Get the bytes from the msg.obj
+//                    byte[] readBuf = (byte[]) msg.obj;
+//                    // construct a string from the valid bytes in the buffer
+//                    readMessage = new String(readBuf, 0, msg.arg1);
+//                    Log.i("Weight: ", ""+readMessage);
 //                    break;
 //            }
 //        }
 //    };
 
-    /*
-    http://stackoverflow.com/questions/23540754/send-data-from-arduino-to-android-app-via-bluetooth
+    /* DATA TRANSFER
+    Writing and Reading to/from Arduino
      */
-    // The Handler that gets information back from the Socket
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_WRITE:
-                    //Do something when writing
-                    break;
-                case MESSAGE_READ:
-                    //Get the bytes from the msg.obj
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.i("SUCCESSS", ""+readMessage);
-                    break;
-            }
-        }
-    };
+//    private class ConnectedThread extends Thread {
+//        private final BluetoothSocket mmSocket;
+//        private final InputStream mmInStream;
+//        private final OutputStream mmOutStream;
+//
+//        public ConnectedThread(BluetoothSocket socket) {
+//            Log.i("ConnectedThread", "Started");
+//            mmSocket = socket;
+//            InputStream tmpIn = null;
+//            OutputStream tmpOut = null;
+//            try {
+//                tmpIn = socket.getInputStream();
+//                tmpOut = socket.getOutputStream();
+//            } catch (IOException e) {
+//            }
+//            mmInStream = tmpIn;
+//            mmOutStream = tmpOut;
+//        }
+//
+//        public void run() {
+//            sendReceiveBT = new SendReceiveBytes(mmSocket);
+//            new Thread(sendReceiveBT).start();
+//            String red = "r";
+//            byte[] myByte = stringToBytesUTFCustom(red);
+//            sendReceiveBT.write(myByte);
+//        }
+//
+//        public void cancel() {
+//            try {
+//                mmSocket.close();
+//            } catch (IOException e) {
+//            }
+//        }
+//    }
 
-    private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
-            Log.i("ConnectedThread", "Started");
-            mmSocket = socket;
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-            }
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
+//    public static byte[] stringToBytesUTFCustom(String str) {
+//        char[] buffer = str.toCharArray();
+//        byte[] b = new byte[buffer.length << 1];
+//        for (int i = 0; i < buffer.length; i++) {
+//            int bpos = i << 1;
+//            b[bpos] = (byte) ((buffer[i] & 0xFF00) >> 8);
+//            b[bpos + 1] = (byte) (buffer[i] & 0x00FF);
+//        }
+//        return b;
+//    }
 
-        public void run() {
-            sendReceiveBT = new SendReceiveBytes(mmSocket);
-            new Thread(sendReceiveBT).start();
-            String red = "r";
-            byte[] myByte = stringToBytesUTFCustom(red);
-            sendReceiveBT.write(myByte);
-
-//            Log.i("ConnectedThread", "Ran");
-//            byte[] buffer = new byte[1024];
-//            int begin = 0;
-//            int bytes = 0;
-//            String str = "*";
-//            byte[] output = str.getBytes();
-//            write(output);
+    //        private BluetoothSocket btSocket;
+//        private InputStream btInputStream = null;
+//        ;
+//        private OutputStream btOutputStream = null;
+//        String TAG = "SendReceiveBytes";
+//
+//        public SendReceiveBytes(BluetoothSocket socket) {
+//            btSocket = socket;
+//            try {
+//                btInputStream = btSocket.getInputStream();
+//                btOutputStream = btSocket.getOutputStream();
+//            } catch (IOException streamError) {
+//                Log.e(TAG, "Error when getting input or output Stream");
+//            }
+//        }
+//
+//        public void run() {
+//    private class SendReceiveBytes implements Runnable {
+//            byte[] buffer = new byte[1024]; // buffer store for the stream
+//            int bytes; // bytes returned from read()
+//
+//            // Keep listening to the InputStream until an exception occurs
 //            while (true) {
-//                Log.i("ConnectedThread", "In the While Loop");
 //                try {
-//                    Log.i("inputbytes-before", ""+bytes);
-//                    bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
-//                    Log.i("inputbytes-after", ""+bytes);
-//                    for(int i = begin; i < bytes; i++) {
-//                        Log.i("input", "for loop "+i);
-//                        if(buffer[i] == "#".getBytes()[0]) {
-//                            mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
-//                            begin = i + 1;
-//                            if(i == bytes - 1) {
-//                                bytes = 0;
-//                                begin = 0;
-//                            }
-//                            Log.i("inputbuffer", ""+buffer[i]);
-//                        }
-//                    }
+//                    // Read from the InputStream
+//                    bytes = btInputStream.read(buffer);
+//                    // Send the obtained bytes to the UI activity
+//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+//                            .sendToTarget();
 //                } catch (IOException e) {
-//                    Log.i("messsaaage", "bye??");
-//                    e.printStackTrace();
+//                    Log.e(TAG, "Error reading from btInputStream");
 //                    break;
 //                }
 //            }
-        }
-
-        //        public void write(byte[] bytes) {
-//            try {
-//                mmOutStream.write(bytes);
-//                Log.i("write", "sent");
-//            } catch (IOException e) { }
 //        }
-        public void write(byte[] bytes) {
-            try {
-                mmOutStream.write(bytes);
-            } catch (IOException e) {
-                Log.e(TAG, "Error when writing to btOutputStream");
-            }
-        }
-
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-            }
-        }
-    }
+//
+//        public void write(byte[] bytes) {
+//            try {
+//                btOutputStream.write(bytes);
+//            }
+//            catch (IOException e) {
+//                Log.e(TAG, "Error when writing to btOutputStream");
+//            }
+//        }
+//    }
 
 
     class ListItemClicked implements AdapterView.OnItemClickListener {
@@ -364,7 +375,7 @@ public class SettingsFragment extends Fragment {
             // TODO Auto-generated method stub
             bdDevice = arrayListBluetoothDevices.get(position);
             //bdClass = arrayListBluetoothDevices.get(position);
-            Log.i("Log", "The dvice : " + bdDevice.toString());
+            //Log.i("Log", "The dvice : " + bdDevice.toString());
             /*
              * here below we can do pairing without calling the callthread(), we can directly call the
              * connect(). but for the safer side we must usethe threading object.
@@ -372,8 +383,7 @@ public class SettingsFragment extends Fragment {
             //callThread();
             //connect(bdDevice);
 
-
-            Log.i("bdDevice msgButton", "" + bdDevice.getName());
+            Log.i("Device Name: ", "" + bdDevice.getName());
             mConnectThread = new ConnectThread(bdDevice);
             mConnectThread.start();
 
@@ -393,27 +403,7 @@ public class SettingsFragment extends Fragment {
 //            }//connect(bdDevice);
 //
 //            Log.i("Log", "The bond is created: "+isBonded);
-            Log.i("bluetooth", "connected!!!!");
-
-            Log.i("Log", "devicesss: " + bdDevice.getName());
-            //Log.i("Log", "mout: " + mOut.toString());
             connected = true;
-//            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-//            try {
-//                mBlueSocket = bdDevice.createRfcommSocketToServiceRecord(uuid);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                mOut = mBlueSocket.getOutputStream();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                mIn = mBlueSocket.getInputStream();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
@@ -438,7 +428,7 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    private Boolean connect(BluetoothDevice bdDevice) {
+/*    private Boolean connect(BluetoothDevice bdDevice) {
         Boolean bool = false;
         try {
             Log.i("Log", "service method is called ");
@@ -455,7 +445,7 @@ public class SettingsFragment extends Fragment {
             e.printStackTrace();
         }
         return bool.booleanValue();
-    }
+    }*/
 
 
 
@@ -469,14 +459,13 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    public boolean createBond(BluetoothDevice btDevice)
+/*    public boolean createBond(BluetoothDevice btDevice)
             throws Exception {
         Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
         Method createBondMethod = class1.getMethod("createBond");
         Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);
         return returnValue.booleanValue();
-    }
-
+    }*/
 
     class ButtonClicked implements View.OnClickListener {
         @Override
@@ -489,14 +478,11 @@ public class SettingsFragment extends Fragment {
                     arrayListBluetoothDevices.clear();
                     startSearching();
                     break;
-                case R.id.buttonDesc:
-                    makeDiscoverable();
-                    break;
                 case R.id.buttonOff:
                     offBluetooth();
                     break;
-                case R.id.buttonMsg:
-                    SendMessage();
+                case R.id.buttonWeight:
+                    getWeight();
                     break;
                 default:
                     break;
@@ -544,7 +530,7 @@ public class SettingsFragment extends Fragment {
     };
 
     private void startSearching() {
-        Log.i("Log", "in the start searching method");
+        Toast.makeText(getActivity(), "Searching...", Toast.LENGTH_SHORT).show();
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         getActivity().registerReceiver(myReceiver, intentFilter);
         bluetoothAdapter.startDiscovery();
@@ -563,49 +549,13 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void makeDiscoverable() {
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);
-        Log.i("Log", "Discoverable ");
-    }
-
-
-    /*
-    DATA TRANSFER
-     */
-
-    String red = "r";
-    byte[] myByte = stringToBytesUTFCustom(red);
-
-    public static byte[] stringToBytesUTFCustom(String str) {
-        char[] buffer = str.toCharArray();
-        byte[] b = new byte[buffer.length << 1];
-        for (int i = 0; i < buffer.length; i++) {
-            int bpos = i << 1;
-            b[bpos] = (byte) ((buffer[i] & 0xFF00) >> 8);
-            b[bpos + 1] = (byte) (buffer[i] & 0x00FF);
-        }
-        return b;
-    }
-
-    public void SendMessage() {
-        Log.i("Msg", "msg button clicked");
+    public void getWeight() {
+//        if (mConnectedThread == null){
+//            Log.e("Error Connected ", "null");
+//            return;
+//        }
         mConnectedThread = new ConnectedThread(mConnectThread.getSocket());
         mConnectedThread.start();
-//        try {
-//            Log.i("Msg", "Tried");
-//            if(connected) {
-//                Log.i("Msg", ""+ mOut.toString());
-//                mOut.write(myByte);
-//                Log.i("Msg", "Message sent");
-//                Toast.makeText(getActivity().getApplicationContext(), "MESSAGE_SENT", Toast.LENGTH_SHORT).show();
-//            }
-//
-//        } catch (IOException e){
-//            LogError("->[#]Error while sending message: " + e.getMessage());
-//        }
-
     }
 
 
@@ -631,54 +581,21 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    private void LogError(String msg) {
-        Log.e(TAG, msg);
+
+    @Override
+    public void onPause()
+    {
+        try {
+            getActivity().unregisterReceiver(myReceiver);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+
+        super.onStop();
     }
 
-    private class SendReceiveBytes implements Runnable {
-        private BluetoothSocket btSocket;
-        private InputStream btInputStream = null;
-        ;
-        private OutputStream btOutputStream = null;
-        String TAG = "SendReceiveBytes";
 
-        public SendReceiveBytes(BluetoothSocket socket) {
-            btSocket = socket;
-            try {
-                btInputStream = btSocket.getInputStream();
-                btOutputStream = btSocket.getOutputStream();
-            } catch (IOException streamError) {
-                Log.e(TAG, "Error when getting input or output Stream");
-            }
-        }
 
-        public void run() {
-            byte[] buffer = new byte[1024]; // buffer store for the stream
-            int bytes; // bytes returned from read()
 
-            // Keep listening to the InputStream until an exception occurs
-            while (true) {
-                try {
-                    // Read from the InputStream
-                    bytes = btInputStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
-                    Log.i("Successs", "obtainmessage");
-                } catch (IOException e) {
-                    Log.e(TAG, "Error reading from btInputStream");
-                    break;
-                }
-            }
-        }
 
-        public void write(byte[] bytes) {
-            try {
-                btOutputStream.write(bytes);
-            }
-            catch (IOException e) {
-                Log.e(TAG, "Error when writing to btOutputStream");
-            }
-        }
-    }
 }

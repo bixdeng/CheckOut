@@ -26,7 +26,7 @@ import android.view.View.OnClickListener;
  * Use the {@link SingleProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SingleProductFragment extends Fragment {
+public class SingleProductFragment extends BluetoothHelper {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_NAME = "param1";
@@ -135,6 +135,10 @@ public class SingleProductFragment extends Fragment {
                 quantity = (Integer.parseInt((String) ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).getText()));
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
+                /*
+                data transfer
+                 */
+                getWeight();
                 addItemToList();
                 ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment());
                 ft.commit();
@@ -160,6 +164,15 @@ public class SingleProductFragment extends Fragment {
         });
 
         return singleProductView;
+    }
+
+    public void getWeight() {
+//        if (mConnectedThread == null){
+//            Log.e("Error Connected ", "null");
+//            return;
+//        }
+        mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
+        mConnectedThread.start();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

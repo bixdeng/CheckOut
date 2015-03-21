@@ -329,7 +329,7 @@ public class MainActivity extends ActionBarActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             SettingsFragment settingsFragment = new SettingsFragment();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, settingsFragment)
+                        .replace(R.id.container, settingsFragment).addToBackStack("Settings")
                         .commit();
 
             return true;

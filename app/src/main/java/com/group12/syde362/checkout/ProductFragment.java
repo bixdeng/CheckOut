@@ -246,7 +246,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
             }
         }
 
-        onItem
+
 
         /*if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
