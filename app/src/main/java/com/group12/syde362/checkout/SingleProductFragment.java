@@ -44,6 +44,7 @@ public class SingleProductFragment extends BluetoothHelper {
     private String price;
     private Integer quantity = 1;
     private Double totalPrice;
+    double weightArduino;
 
     private OnFragmentInteractionListener mListener;
 
@@ -145,7 +146,8 @@ public class SingleProductFragment extends BluetoothHelper {
                 /*
                 data transfer
                  */
-                getWeight();
+                weightArduino = getWeight();
+                Log.i("Measured Weight: ", ""+weightArduino);
                 addItemToList();
                 ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment(), "List");
                 ft.commit();
@@ -184,13 +186,15 @@ public class SingleProductFragment extends BluetoothHelper {
         return singleProductView;
     }
 
-    public void getWeight() {
-//        if (mConnectedThread == null){
-//            Log.e("Error Connected ", "null");
-//            return;
-//        }
+    public double getWeight() {
+        if (mConnectedThread == null){
+            Log.e("Error Connected ", "null");
+            Toast.makeText(getActivity(), "Connect to Bluetooth in Settings!", Toast.LENGTH_SHORT).show();
+            return 0;
+        }
         mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
         mConnectedThread.start();
+        return measuredWeight;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

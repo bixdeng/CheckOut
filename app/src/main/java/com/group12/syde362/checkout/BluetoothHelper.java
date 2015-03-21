@@ -59,6 +59,7 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
     public static final int MESSAGE_READ = 2;
     String readMessage = "";
     SendReceiveBytes sendReceiveBT = null;
+    static double measuredWeight;
 
 
 
@@ -99,7 +100,7 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
             }
 //            mConnectedThread = new ConnectedThread(mmSocket);
 //            mConnectedThread.start();
-            Toast.makeText(getActivity(), "Connected to "+bdDevice.getName(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Connected to "+bdDevice.getName(), Toast.LENGTH_SHORT).show();
             Log.i("bluetooth", "connected!!");
         }
 
@@ -237,7 +238,9 @@ http://stackoverflow.com/questions/23540754/send-data-from-arduino-to-android-ap
                             byte[] readBuf = (byte[]) msg.obj;
                             // construct a string from the valid bytes in the buffer
                             readMessage = new String(readBuf, 0, msg.arg1);
-                            Log.i("Weight: ", "" + readMessage);
+                            measuredWeight = Double.parseDouble(readMessage);
+ //                           Log.i("Weight: ", "" + readMessage);
+                            Log.i("Weight: ", "" + measuredWeight);
                             Toast.makeText(getActivity(), ""+readMessage, Toast.LENGTH_SHORT).show();
                             break;
                     }
