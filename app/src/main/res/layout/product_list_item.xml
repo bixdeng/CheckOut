@@ -12,9 +12,10 @@
         android:id="@+id/titleTextView"
         android:minHeight="50dp"
         android:gravity="center|left"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="20dp"
+        android:textColor="#212121" />
 
     <TextView
         android:layout_width="0dp"
@@ -24,7 +25,8 @@
         android:id="@+id/listItemQuantity"
         android:layout_weight="0.35"
         android:gravity="center_vertical|center_horizontal|right"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="20dp"
+        android:textColor="#212121" />
 
     <!--
     <ImageButton

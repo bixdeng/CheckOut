@@ -3,16 +3,19 @@ package com.group12.syde362.checkout;
 import android.app.Activity;
 //import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.gesture.GestureOverlayView;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +27,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.PopupMenu;
+import android.app.AlertDialog;
 import android.widget.Toast;
 import android.widget.ImageButton;
 
@@ -72,7 +77,7 @@ import android.view.GestureDetector.OnGestureListener;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnDragListener {
+public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnDragListener, AbsListView.OnItemLongClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -161,7 +166,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_list, container, false);
 
-        Button button = (Button) view.findViewById(R.id.getBtn);
+        ImageButton button = (ImageButton) view.findViewById(R.id.getBtn);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -173,15 +178,18 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         totalPriceLabel = (TextView) view.findViewById(R.id.totalPrice);
-        totalPriceLabel.setText("$ 0");
+        totalPriceLabel.setText("$0");
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        mListView.setOnItemLongClickListener(this);
         mListView.setOnTouchListener(swipeDetector);
         updateTotalPriceLabel();
         return view;
     }
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -246,31 +254,20 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
             }
         }
 
+        ProductListItem item = (ProductListItem) this.productList.get(position);
+        //SingleProductFragment singleProductFrag = new SingleProductFragment();
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
+        ft.replace(R.id.container, matchingItem).addToBackStack("tag");
+        ft.commit();
 
-
-        /*if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }*/
-        else { //if it is only touch action
-            ProductListItem item = (ProductListItem) this.productList.get(position);
-
-            //SingleProductFragment singleProductFrag = new SingleProductFragment();
-            android.support.v4.app.FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
-            ft.replace(R.id.container, matchingItem).addToBackStack("tag");
-            ft.commit();
-        }
     }
 
     @Override
     public boolean onDrag(View v, DragEvent event) {
         return false;
     }
-
-
 
     /**
      * The default content for this Fragment has a TextView that is shown when
@@ -283,6 +280,51 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
+    }
+
+    //handler for longclicking list item
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        Log.d("LONG CLICK HANDLER", "EY");
+        final CharSequence [] option = new CharSequence[] { "Remove", "Change Quantity" };
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem_popupmenu, option);
+
+        AlertDialog.Builder itemOptions = new AlertDialog.Builder(getActivity());
+        itemOptions.setTitle("Item Options");
+        itemOptions.setCancelable(true);
+        itemOptions.setItems(option, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int action) {
+                // TODO Auto-generated method stub
+                Log.d("HEY!", "menu option is clicked");
+                if(action == 0){ //if user wants to remove the item from list
+                    removeItemFromList(position);
+                }
+
+                if(action == 1){ //if user wants to update the quantity
+                    ProductListItem item = (ProductListItem) productList.get(position);
+
+                    //SingleProductFragment singleProductFrag = new SingleProductFragment();
+                    android.support.v4.app.FragmentManager fm = getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    SingleProductDescrFragment matchingItem = findMatchingSingleProductDescrFragment(fm.getFragments(), item.getItemTitle(), position);
+                    ft.replace(R.id.container, matchingItem).addToBackStack("tag");
+                    ft.commit();
+                }
+
+                return;
+            }
+        });
+        /*itemOptions.setAdapter(adapter,new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                Log.d("HEY!", "menu option is clicked");
+             }
+        });*/
+
+        AlertDialog alert11 = itemOptions.create();
+        alert11.show();
+
+        return true;
     }
 
     /**
@@ -455,6 +497,19 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         return productList;
     }
 
+    public SingleProductFragment findMatchingSingleProductFragment(List<Fragment> loFragments, String itemName){
+        SingleProductFragment matchedItemInfo;
+        for (int i = 0; i < loFragments.size(); i++) {
+            if(loFragments.get(i) instanceof SingleProductFragment){
+                matchedItemInfo = (SingleProductFragment) loFragments.get(i);
+                if (matchedItemInfo.getName().equals(itemName)){
+                    return matchedItemInfo;
+                }
+            }
+        }
+
+        return null;
+    }
     public SingleProductDescrFragment findMatchingSingleProductDescrFragment(List<Fragment> loFragments, String itemName, Integer position){
         SingleProductDescrFragment matchedItemInfo;
         for (int i = 0; i < loFragments.size(); i++) {
@@ -469,6 +524,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
         return null;
     }
+
 
     public void updateTotalWeight(ProductListItem newItem, Integer quantity){
         totalWeight = totalWeight + (quantity * newItem.getItemWeight());
@@ -489,7 +545,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     private void updateTotalPriceLabel() {
         String totalPriceRounded = String.format("%.2f", totalPrice);
-        totalPriceLabel.setText(("$ " + totalPriceRounded));
+        totalPriceLabel.setText(("$" + totalPriceRounded));
         Log.d("total price rounded: ", totalPriceRounded);
     }
 
@@ -503,6 +559,36 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     }
 
 
+    public void removeItemFromList(int removingPosition) {
+        ProductListItem removingItem = (ProductListItem) productList.get(removingPosition);
+        Double removingItemPrice = removingItem.getItemPrice();
+        Integer removingItemQuantity = removingItem.getItemQuantity();
+        Double removingItemWeight = removingItem.getItemWeight();
+
+        subtractFromTotalPrice(removingItemQuantity, String.valueOf(removingItemPrice));
+        subtractFromTotalWeight(removingItemQuantity, String.valueOf(removingItemWeight));
+
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment matchingItem = (Fragment) findMatchingSingleProductFragment(fm.getFragments(), removingItem.getItemTitle());
+        Fragment matchingItemDescr = (Fragment) findMatchingSingleProductDescrFragment(fm.getFragments(), removingItem.getItemTitle(), removingPosition);
+        fm.getFragments().remove(matchingItem);
+        fm.getFragments().remove(matchingItemDescr);
+
+        ft.commit();
+        productList.remove(removingPosition);
+        ((ProductListAdapter) mAdapter).notifyDataSetChanged();
+    }
+
+    public void removeSingleFragment(String name) {
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment matchingItem = (Fragment) findMatchingSingleProductFragment(fm.getFragments(), name);
+        fm.getFragments().remove(matchingItem);
+        ft.commit();
+    }
+
+
     public double getTotalWeight(){
         return totalWeight;
     }
@@ -510,5 +596,48 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     public double getTotalPrice(){
         return totalPrice;
     }
+
+
+    //setting back button listener on product fragment
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //getView().setFocusableInTouchMode(true);
+        //setOnBackButtonListener();
+    }
+
+//    private void setOnBackButtonListener() {
+//
+//        this.getView().setOnKeyListener( new View.OnKeyListener()
+//        {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction()!=KeyEvent.ACTION_DOWN)
+//                    return true;
+//                if( keyCode == KeyEvent.KEYCODE_BACK )
+//                {
+//                    new AlertDialog.Builder(getActivity())
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .setMessage("Exit CheckedOut?")
+//                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//
+//                                    //Stop the activity
+//                                    getActivity().finish();
+//                                }
+//
+//                            })
+//                            .setNegativeButton("No", null)
+//                            .show();
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        } );
+
+//    }
 
 }

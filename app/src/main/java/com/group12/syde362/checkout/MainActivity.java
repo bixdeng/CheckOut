@@ -2,9 +2,14 @@ package com.group12.syde362.checkout;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -13,6 +18,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +40,9 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.os.AsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class MainActivity extends ActionBarActivity
 
@@ -43,6 +52,7 @@ public class MainActivity extends ActionBarActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
+    public Activity activity = this;
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private TextView mTextView;
     private NfcAdapter mNfcAdapter;
@@ -251,14 +261,39 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
+                String scannedItemName = null;
                 FragmentManager fragmentManager = getSupportFragmentManager();
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(result);
+                    scannedItemName = obj.getString("name");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //if this is a new item
+                if ((getItemListFragment().findMatchingSingleProductFragment(fragmentManager.getFragments(), scannedItemName)) == null) {
+                    SingleProductFragment newSingleProduct = SingleProductFragment.newInstance(result, "hi");
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container,  newSingleProduct).addToBackStack("Item")
+                            .commit();
+                    //TextView newSingleProductTextView = (TextView) newSingleProduct.getView().findViewById(R.id.single_product_fragment_view);
+                    //newSingleProductTextView.setText("Read content: " + result);
+                } else { //if this item already exists
+                    AlertDialog.Builder adBuilder = new AlertDialog.Builder(MainActivity.this);
+                    adBuilder.setMessage("This item is already added!");
+                    adBuilder.setCancelable(true);
+                    final AlertDialog existsDialog = adBuilder.create();
+                    existsDialog.show();
+                    final Timer t = new Timer();
+                    t.schedule(new TimerTask() {
+                        public void run() {
+                            existsDialog.dismiss(); // when the task active then close the dialog
+                            t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
+                        }
+                    }, 2000); // after 2 second (or 2000 miliseconds), the task will be active.
 
-                SingleProductFragment newSingleProduct = SingleProductFragment.newInstance(result, "hi");
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container,  newSingleProduct).addToBackStack("Item")
-                        .commit();
-                //TextView newSingleProductTextView = (TextView) newSingleProduct.getView().findViewById(R.id.single_product_fragment_view);
-                //newSingleProductTextView.setText("Read content: " + result);
+                }
+
             }
         }
     }
@@ -271,12 +306,12 @@ public class MainActivity extends ActionBarActivity
 
         if (position+1 == 1){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, itemListFragment)
+                    .replace(R.id.container, itemListFragment, "List")
                     .commit();
         }
         else {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, itemListFragment)
+                    .replace(R.id.container, itemListFragment, "List")
                     .commit();
         }
     }
@@ -390,5 +425,45 @@ public class MainActivity extends ActionBarActivity
     public ProductFragment getItemListFragment(){
         return itemListFragment;
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Handle the back button
+        if (event.getAction()!=KeyEvent.ACTION_DOWN){
+            return true;
+        }
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            Fragment listFragment = fragmentManager.findFragmentByTag("List");
+            if(listFragment.isVisible()){
+                new AlertDialog.Builder(this)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setMessage("Exit CheckedOut?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    //Stop the activity
+                                    MainActivity.this.finish();
+                                }
+
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+
+                    return true;
+            }
+            Log.d("hi","j");
+
+            return true;
+        }
+        else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
 
 }

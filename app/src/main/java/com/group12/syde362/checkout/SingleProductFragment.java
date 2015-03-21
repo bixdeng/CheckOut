@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,7 @@ public class SingleProductFragment extends BluetoothHelper {
     private String name;
     private String price;
     private Integer quantity = 1;
+    private Double totalPrice;
 
     private OnFragmentInteractionListener mListener;
 
@@ -100,19 +103,23 @@ public class SingleProductFragment extends BluetoothHelper {
         TextView singleProductWeight = (TextView) singleProductView.findViewById(R.id.singleProductWeight);
         TextView singleProductName = (TextView) singleProductView.findViewById(R.id.singleProductName);
         final TextView updatingQuantity = (TextView) singleProductView.findViewById(R.id.updatingQuantity);
+        final TextView totalProductPrice = (TextView) singleProductView.findViewById(R.id.totalProductPrice);
 
-        Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
-        Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
+
+        final Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
+        final Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
+        final Animation buttonAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.button_pressed);
 
         Bundle bundle = getArguments();
 
         singleProductName.setText(bundle.getString(ARG_NAME));
         singleProductPrice.setText("$" + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText(bundle.getString(ARG_WEIGHT) + "kg");
+        singleProductWeight.setText("" + bundle.getString(ARG_WEIGHT) + "kg");
+        totalProductPrice.setText("$" + bundle.getString(ARG_PRICE));
         ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).setText(String.valueOf(quantity));
 
 
-        Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
+        final Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
@@ -122,13 +129,13 @@ public class SingleProductFragment extends BluetoothHelper {
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
-                ft.replace(R.id.container, itemListFragment);
+                ft.replace(R.id.container, itemListFragment, "List");
                 ft.commit();
-
+                itemListFragment.removeSingleFragment(name);
             }
         });
 
-        Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
+        final Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
@@ -140,7 +147,7 @@ public class SingleProductFragment extends BluetoothHelper {
                  */
                 getWeight();
                 addItemToList();
-                ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment());
+                ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment(), "List");
                 ft.commit();
             }
         });
@@ -149,17 +156,28 @@ public class SingleProductFragment extends BluetoothHelper {
             @Override
             public void onClick(View v) {
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
-                Integer newQuantity = current - 1;
-                updatingQuantity.setText(String.valueOf(newQuantity));
+                if (current <= 1){
+                    quantityMinus.startAnimation(buttonAnim);
+                    updatingQuantity.setText(String.valueOf(1));
+                }
+                else{
+                    Integer newQuantity = current - 1;
+                    quantityMinus.startAnimation(buttonAnim);
+                    updatingQuantity.setText(String.valueOf(newQuantity));
+                    totalProductPrice.setText("$" + String.valueOf(String.format("%.2f", calcTotalPrice(newQuantity, price))));
+                }
+
             }
         });
 
         quantityPlus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                quantityPlus.startAnimation(buttonAnim);
                 Integer current = Integer.valueOf(String.valueOf(updatingQuantity.getText()));
                 Integer newQuantity = current + 1;
                 updatingQuantity.setText(String.valueOf(newQuantity));
+                totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
             }
         });
 
@@ -233,6 +251,14 @@ public class SingleProductFragment extends BluetoothHelper {
         ft.replace(R.id.container, itemDescr);
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    public Double calcTotalPrice(Integer quantity, String price){
+
+        Double unitPrice = Double.valueOf(price);
+        Double newTotalPrice = unitPrice * quantity;
+        totalPrice = newTotalPrice;
+        return newTotalPrice;
     }
 
     public String getName(){
