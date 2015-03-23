@@ -58,6 +58,8 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_READ = 2;
     String readMessage = "";
+    String readMessage1 = "";
+    String readMessage2 = "";
     SendReceiveBytes sendReceiveBT = null;
     static double measuredWeight;
 
@@ -237,10 +239,12 @@ http://stackoverflow.com/questions/23540754/send-data-from-arduino-to-android-ap
                             //Get the bytes from the msg.obj
                             byte[] readBuf = (byte[]) msg.obj;
                             // construct a string from the valid bytes in the buffer
-                            readMessage = new String(readBuf, 0, msg.arg1);
+                            readMessage1 = new String(readBuf, 0, msg.arg1);
+                            readMessage = readMessage + readMessage1;
+                            
                             measuredWeight = Double.parseDouble(readMessage);
- //                           Log.i("Weight: ", "" + readMessage);
-                            Log.i("Weight: ", "" + measuredWeight);
+                            Log.i("Weight String: ", "" + readMessage);
+                            Log.i("Weight Double: ", "" + measuredWeight);
                             Toast.makeText(getActivity(), ""+readMessage, Toast.LENGTH_SHORT).show();
                             break;
                     }

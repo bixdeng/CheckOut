@@ -1,200 +1,227 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:id="@+id/single_product_fragment"
     tools:context="com.group12.syde362.checkout.SingleProductFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <FrameLayout
+    <LinearLayout
         android:layout_width="341dp"
-        android:layout_height="420dp"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical"
         android:layout_gravity="center"
         android:background="@color/white"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
         android:shadowColor="@color/Black"
         android:shadowDx="0"
         android:shadowDy="2"
         android:shadowRadius="2">
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="5dp"
-            android:background="#55000000"
-            android:layout_gravity="bottom"
-            android:backgroundTint="@color/Black"
-            android:backgroundTintMode="multiply"
-            />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Weight"
-            android:textColor="#212121"
-            android:id="@+id/singleProductWeightDescr"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_below="@+id/singleProductName"
-            android:layout_toLeftOf="@+id/numberPicker"
-            android:layout_toStartOf="@+id/numberPicker"
-            android:layout_marginTop="120dp"
-            android:textSize="20dp" />
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Name"
+                android:textColor="#212121"
+                android:id="@+id/singleProductNameDescr"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginTop="40dp"
+                android:textSize="30dp" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Quantity: "
-            android:textColor="#212121"
-            android:id="@+id/quantityDescr"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2.5"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1.1"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="35dp"
+                android:layout_marginLeft="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Weight:"
+                    android:id="@+id/weightColonDescr"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginLeft="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Quantity: "
+                    android:textColor="#212121"
+                    android:id="@+id/quantityDescr"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="50dp"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Unit Price:"
+                    android:textColor="#212121"
+                    android:id="@+id/singleProductPriceLabelDescr"
+                    android:layout_marginTop="50dp"
+                    android:textSize="20dp"
+                    android:layout_gravity="right" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="35dp"
+                android:layout_marginLeft="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Weight"
+                    android:textColor="#212121"
+                    android:id="@+id/singleProductWeightDescr"
+                    android:layout_gravity="left"
+                    android:textSize="20dp" />
+
+                <!-- Quantity inc & dec -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:id="@+id/quantityChange"
+                    android:layout_marginTop="45dp">
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/quantity_minus"
+                        android:text="-"
+                        android:id="@+id/minusDescr"
+                        android:layout_gravity="left"
+                        android:layout_marginTop="0dp"
+                        android:textColor="@color/White"
+                        android:textSize="20dp"/>
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="1"
+                        android:id="@+id/updatingQuantityDescr"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="0dp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_marginTop="0dp"
+                        android:background="@color/white" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/quantity_plus"
+                        android:text="+"
+                        android:id="@+id/plusDescr"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="0dp"
+                        android:textColor="@color/White"
+                        android:textSize="20dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Price"
+                    android:textColor="#212121"
+                    android:id="@+id/singleProductPriceDescr"
+                    android:layout_gravity="left"
+                    android:textSize="20dp"
+                    android:layout_marginTop="31dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="$00.00"
+                android:textColor="#212121"
+                android:id="@+id/totalProductPriceDescr"
+                android:textSize="40dp"
+                android:gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:paddingBottom="40dp"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="0dp"
+                android:background="#55000000"
+                android:layout_gravity="bottom"
+                android:backgroundTint="@color/Black"
+                android:backgroundTintMode="multiply"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="341dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:text="×"
+            android:id="@+id/cancelButtonDescr"
+            android:background="@drawable/cancel_button"
+            android:textColor="@color/White"
             android:layout_gravity="center"
-            android:layout_centerVertical="true"
-            android:layout_below="@+id/singleProductPrice"
-            android:layout_alignLeft="@+id/singleProductPrice"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
-            android:textSize="20dp"
-            android:layout_marginRight="100dp" />
+            android:textSize="30dp"
+            android:layout_alignParentLeft="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Weight:"
-            android:id="@+id/weightColonDescr"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_marginTop="120dp"
-            android:layout_marginRight="100dp" />
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/add_to_list_button"
+            android:text="●"
+            android:id="@+id/updateButton"
+            android:layout_gravity="left"
+            android:textColor="@color/White"
+            android:textSize="30dp"
+            android:layout_alignParentRight="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Price"
-            android:textColor="#212121"
-            android:id="@+id/singleProductPriceDescr"
-            android:layout_gravity="center_horizontal"
-            android:layout_centerVertical="true"
-            android:layout_below="@+id/singleProductWeight"
-            android:layout_alignLeft="@+id/singleProductWeight"
-            android:layout_alignStart="@+id/singleProductWeight"
-            android:textSize="20dp"
-            android:layout_marginTop="270dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="$00.00"
-            android:textColor="#212121"
-            android:id="@+id/totalProductPriceDescr"
-            android:layout_centerVertical="true"
-            android:layout_below="@+id/singleProductWeight"
-            android:layout_alignLeft="@+id/singleProductWeight"
-            android:layout_alignStart="@+id/singleProductWeight"
-            android:layout_marginTop="330dp"
-            android:textSize="40dp"
-            android:layout_gravity="center|top" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Unit Price:"
-            android:textColor="#212121"
-            android:id="@+id/singleProductPriceLabelDescr"
-            android:layout_centerVertical="true"
-            android:layout_below="@+id/singleProductWeight"
-            android:layout_alignLeft="@+id/singleProductWeight"
-            android:layout_alignStart="@+id/singleProductWeight"
-            android:layout_marginTop="270dp"
-            android:textSize="20dp"
-            android:layout_marginRight="100dp"
-            android:layout_gravity="center|top" />
-
-    </FrameLayout>
-
-    <Button
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:background="@drawable/add_to_list_button"
-        android:text="●"
-        android:id="@+id/updateButton"
-        android:layout_alignTop="@+id/cancelButton"
-        android:layout_toRightOf="@+id/singleProductPrice"
-        android:layout_toEndOf="@+id/singleProductPrice"
-        android:layout_marginBottom="30dp"
-        android:layout_gravity="right|bottom"
-        android:textColor="@color/White"
-        android:textSize="30dp"
-        android:layout_marginRight="20dp" />
-
-    <Button
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:text="×"
-        android:id="@+id/cancelButtonDescr"
-        android:background="@drawable/cancel_button"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/singleProductPrice"
-        android:layout_marginBottom="30dp"
-        android:textColor="@color/White"
-        android:layout_alignRight="@+id/quantity"
-        android:layout_alignEnd="@+id/quantity"
-        android:layout_gravity="left|bottom"
-        android:textSize="30dp"
-        android:layout_marginLeft="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Name"
-        android:textColor="#212121"
-        android:id="@+id/singleProductNameDescr"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="70dp"
-        android:layout_alignParentTop="true"
-        android:textSize="30dp" />
-
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/quantity_minus"
-        android:text="-"
-        android:id="@+id/minusDescr"
-        android:layout_gravity="center"
-        android:layout_marginTop="-50dp"
-        android:textColor="@color/White"
-        android:textSize="20dp"/>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/quantity_plus"
-        android:text="+"
-        android:id="@+id/plusDescr"
-        android:layout_gravity="center"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="-50dp"
-        android:textColor="@color/White"
-        android:textSize="20dp" />
-
-    <TextView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1"
-        android:id="@+id/updatingQuantityDescr"
-        android:layout_gravity="center"
-        android:layout_marginLeft="50dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_marginTop="-50dp"
-        android:background="@color/white" />
-
-
-
-
-</FrameLayout>
+    </RelativeLayout>
+</LinearLayout>

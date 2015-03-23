@@ -115,7 +115,7 @@ public class SingleProductFragment extends BluetoothHelper {
 
         singleProductName.setText(bundle.getString(ARG_NAME));
         singleProductPrice.setText("$" + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText("" + bundle.getString(ARG_WEIGHT) + "kg");
+        singleProductWeight.setText("" + bundle.getString(ARG_WEIGHT) + " kg");
         totalProductPrice.setText("$" + bundle.getString(ARG_PRICE));
         ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).setText(String.valueOf(quantity));
 
@@ -147,7 +147,21 @@ public class SingleProductFragment extends BluetoothHelper {
                 data transfer
                  */
                 weightArduino = getWeight();
+                double weightNFC = Double.parseDouble(weight);
+                double minWeight = weightNFC*0.8;
+                double maxWeight = weightNFC*1.2;
                 Log.i("Measured Weight: ", ""+weightArduino);
+                Log.i("NFC Weight: ", ""+weightNFC);
+
+                if (weightArduino == 0){
+                    return;
+                }
+
+//                if (weightArduino < minWeight || weightArduino > maxWeight){
+//                    Log.i("Message", "Place the correct item in the cart");
+//                    return;
+//                }
+
                 addItemToList();
                 ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment(), "List");
                 ft.commit();
@@ -187,13 +201,13 @@ public class SingleProductFragment extends BluetoothHelper {
     }
 
     public double getWeight() {
+        mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
+        mConnectedThread.start();
         if (mConnectedThread == null){
             Log.e("Error Connected ", "null");
             Toast.makeText(getActivity(), "Connect to Bluetooth in Settings!", Toast.LENGTH_SHORT).show();
             return 0;
         }
-        mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
-        mConnectedThread.start();
         return measuredWeight;
     }
 

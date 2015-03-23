@@ -90,7 +90,7 @@ public class SingleProductDescrFragment extends Fragment{
 
         singleProductName.setText(name);
         singleProductPrice.setText("$" + String.valueOf(price));
-        singleProductWeight.setText(String.valueOf(weight) + "kg");
+        singleProductWeight.setText(String.valueOf(weight) + " kg");
         ((TextView) singleProductDescrView.findViewById(R.id.updatingQuantityDescr)).setText(String.valueOf(quantity));
         totalProductPrice.setText("$" + String.valueOf(String.format("%.2f",totalPrice)));
 
