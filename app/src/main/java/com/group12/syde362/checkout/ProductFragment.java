@@ -393,69 +393,70 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
          * */
          protected String doInBackground(String... args) {
             // Building Parameters
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            // getting JSON string from URL
-            JSONObject json = jParser.makeHttpRequest(url_all_products, "GET", params);
-
-            // Check your log cat for JSON response
-            Log.d("All Products: ", json.toString());
-
-            try {
-                // Checking for SUCCESS TAG
-                int success = json.getInt(TAG_SUCCESS);
-
-                if (success == 1) {
-                    // products found
-                    // Getting Array of Products
-                    products = json.getJSONArray(TAG_PRODUCTS);
-
-                    // looping through All Products
-                    JSONObject lastReading = products.getJSONObject(products.length() - 1);
-                    //for (int i = 0; i < products.length(); i++) {
-                        //JSONObject c = products.getJSONObject(i);
-
-
-                        // Storing each json item in variable
-                        double id = lastReading.getDouble(TAG_PID);
-                        final double weight = lastReading.getDouble(TAG_WEIGHT);
-                        //double id = c.getDouble(TAG_PID);
-                        //final double weight = c.getDouble(TAG_WEIGHT);
-
-/*                        TextView getText = (TextView) getView().findViewById(R.id.getTxt);
-                        getText.setText(String.valueOf(weight));*/
-                        Log.d("WEIGHT: ", "measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
-                        System.out.println("measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
-                                if (weight <= totalWeight + errorRoom && weight >= totalWeight - errorRoom){
-                                    verifyLabel.setText("Correct Weight!");
-                                    verifyLabel.setTextColor(Color.parseColor("#008000"));
-                                }
-                                else{
-                                    verifyLabel.setText("Wrong Weight!");
-                                    verifyLabel.setTextColor(Color.parseColor("#B20000"));
-                                }
-                            }
-                        });
-
-                        // creating new HashMap
-                        HashMap<String, Double> map = new HashMap<String, Double>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_PID, id);
-                        map.put(TAG_WEIGHT, weight);
-
-                        // adding HashList to ArrayList
-                        productsList.add(map);
-                    }
-               // }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
+//            List<NameValuePair> params = new ArrayList<NameValuePair>();
+//            // getting JSON string from URL
+//            JSONObject json = jParser.makeHttpRequest(url_all_products, "GET", params);
+//
+//            // Check your log cat for JSON response
+//            Log.d("All Products: ", json.toString());
+//
+//            try {
+//                // Checking for SUCCESS TAG
+//                int success = json.getInt(TAG_SUCCESS);
+//
+//                if (success == 1) {
+//                    // products found
+//                    // Getting Array of Products
+//                    products = json.getJSONArray(TAG_PRODUCTS);
+//
+//                    // looping through All Products
+//                    JSONObject lastReading = products.getJSONObject(products.length() - 1);
+//                    //for (int i = 0; i < products.length(); i++) {
+//                        //JSONObject c = products.getJSONObject(i);
+//
+//
+//                        // Storing each json item in variable
+//                        double id = lastReading.getDouble(TAG_PID);
+//                        final double weight = lastReading.getDouble(TAG_WEIGHT);
+//                        //double id = c.getDouble(TAG_PID);
+//                        //final double weight = c.getDouble(TAG_WEIGHT);
+//
+///*                        TextView getText = (TextView) getView().findViewById(R.id.getTxt);
+//                        getText.setText(String.valueOf(weight));*/
+//                        Log.d("WEIGHT: ", "measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
+//                        System.out.println("measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
+//
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
+//                                if (weight <= totalWeight + errorRoom && weight >= totalWeight - errorRoom){
+//                                    verifyLabel.setText("Correct Weight!");
+//                                    verifyLabel.setTextColor(Color.parseColor("#008000"));
+//                                }
+//                                else{
+//                                    verifyLabel.setText("Wrong Weight!");
+//                                    verifyLabel.setTextColor(Color.parseColor("#B20000"));
+//                                }
+//                            }
+//                        });
+//
+//                        // creating new HashMap
+//                        HashMap<String, Double> map = new HashMap<String, Double>();
+//
+//                        // adding each child node to HashMap key => value
+//                        map.put(TAG_PID, id);
+//                        map.put(TAG_WEIGHT, weight);
+//
+//                        // adding HashList to ArrayList
+//                        productsList.add(map);
+                    ((MainActivity)getActivity()).startPayPalActivity(totalPrice);
+//                    }
+//               // }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
             return null;
         }
 
