@@ -2,6 +2,7 @@ package com.group12.syde362.checkout;
 
 import android.app.Activity;
 //import android.app.FragmentManager;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.gesture.GestureOverlayView;
@@ -43,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.io.ByteArrayOutputStream;
+import java.util.UUID;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -77,7 +80,7 @@ import android.view.GestureDetector.OnGestureListener;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ProductFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnDragListener, AbsListView.OnItemLongClickListener {
+public class ProductFragment extends BluetoothHelper implements AbsListView.OnItemClickListener, View.OnDragListener, AbsListView.OnItemLongClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -98,6 +101,8 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     TextView totalPriceLabel;
     private AbsListView mListView;
+    int counter = 0;
+    double weightArduino=0.00;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -170,8 +175,12 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                getWeight(v);
-                Log.d("Calculated Weight: ", totalWeight + "kg");
+                try {
+                    getWeight(v);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //Log.d("Calculated Weight: ", totalWeight + "kg");
             }
         });
 
@@ -251,7 +260,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
                 });
                 view.startAnimation(rightAnimation);
 
-            }
+         ;   }
         }
 
         ProductListItem item = (ProductListItem) this.productList.get(position);
@@ -348,8 +357,7 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     private ProgressDialog pDialog;
 
-    // Creating JSON Parser object
-    JSONParser jParser = new JSONParser();
+
 
     ArrayList<HashMap<String, Double>> productsList;
 
@@ -362,13 +370,17 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
     private static final String TAG_PID = "pid";
     private static final String TAG_WEIGHT = "weight";
 
-    // products JSONArray
-    JSONArray products = null;
 
     //get weight from localhost
-    public void getWeight(View v){
-        new LoadAllProducts().execute();
-        productsList = new ArrayList<HashMap<String, Double>>();
+    public void getWeight(View v) throws InterruptedException {
+       // new LoadAllProducts().execute();
+//        productsList = new ArrayList<HashMap<String, Double>>();
+
+        //weightArduino = getArduinoWeight();
+
+        updateUI();
+
+
     }
 
     /**
@@ -392,69 +404,6 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
          * getting All products from url
          * */
          protected String doInBackground(String... args) {
-            // Building Parameters
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            // getting JSON string from URL
-            JSONObject json = jParser.makeHttpRequest(url_all_products, "GET", params);
-
-            // Check your log cat for JSON response
-            Log.d("All Products: ", json.toString());
-
-            try {
-                // Checking for SUCCESS TAG
-                int success = json.getInt(TAG_SUCCESS);
-
-                if (success == 1) {
-                    // products found
-                    // Getting Array of Products
-                    products = json.getJSONArray(TAG_PRODUCTS);
-
-                    // looping through All Products
-                    JSONObject lastReading = products.getJSONObject(products.length() - 1);
-                    //for (int i = 0; i < products.length(); i++) {
-                        //JSONObject c = products.getJSONObject(i);
-
-
-                        // Storing each json item in variable
-                        double id = lastReading.getDouble(TAG_PID);
-                        final double weight = lastReading.getDouble(TAG_WEIGHT);
-                        //double id = c.getDouble(TAG_PID);
-                        //final double weight = c.getDouble(TAG_WEIGHT);
-
-/*                        TextView getText = (TextView) getView().findViewById(R.id.getTxt);
-                        getText.setText(String.valueOf(weight));*/
-                        Log.d("WEIGHT: ", "measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
-                        System.out.println("measured: " + String.valueOf(weight) + "calculated: " + totalWeight);
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
-                                if (weight <= totalWeight + errorRoom && weight >= totalWeight - errorRoom){
-                                    verifyLabel.setText("Correct Weight!");
-                                    verifyLabel.setTextColor(Color.parseColor("#008000"));
-                                }
-                                else{
-                                    verifyLabel.setText("Wrong Weight!");
-                                    verifyLabel.setTextColor(Color.parseColor("#B20000"));
-                                }
-                            }
-                        });
-
-                        // creating new HashMap
-                        HashMap<String, Double> map = new HashMap<String, Double>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_PID, id);
-                        map.put(TAG_WEIGHT, weight);
-
-                        // adding HashList to ArrayList
-                        productsList.add(map);
-                    }
-               // }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
             return null;
         }
@@ -469,29 +418,6 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 
     }
 
-
-    // Method for sending HTTP GET request to a web page
-    public OutputStream HttpRequestGet(Uri uri) throws IOException
-    {
-
-        HttpGet httpget = new HttpGet(uri.toString());
-
-        HttpClient httpclient = new DefaultHttpClient();
-
-        HttpResponse response = httpclient.execute(httpget);
-
-        HttpEntity httpentity = response.getEntity();
-
-        if (null == httpentity)
-        {
-            throw(new IOException("HttpEntity is null"));
-        }
-
-        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-        httpentity.writeTo(outstream);
-
-        return outstream;
-    }
 
     public List getProductList(){
         return productList;
@@ -639,5 +565,53 @@ public class ProductFragment extends Fragment implements AbsListView.OnItemClick
 //        } );
 
 //    }
+
+//    final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+//    BluetoothSocket mmSocket;
+
+    public double getMeasuredWeight() throws InterruptedException {
+        // Cancel the thread that completed the connection
+//        if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+//        if (mConnectThreadTwo != null) {mConnectThreadTwo.cancel(); mConnectThreadTwo = null;}
+        // Cancel any thread currently running a connection
+//        BluetoothSocket tmp = null;
+//        try {
+//            //tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+//            tmp = bdDevice.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+//        } catch (IOException e) {
+//        }
+//        mmSocket = tmp;\
+
+            mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
+            mConnectedThread.start();
+
+
+//        if (mConnectedThread == null){
+//            Log.e("Error Connected ", "null");
+//            Toast.makeText(getActivity(), "Connect to Bluetooth in Settings!", Toast.LENGTH_SHORT).show();
+//            return 0;
+//        }
+        //Log.i("getArduinoWeight", "measuredWeight = "+measuredWeight);
+        return measuredWeight;
+    }
+
+    public void updateUI() throws InterruptedException {
+        weightArduino = getMeasuredWeight();
+
+        Toast.makeText(getActivity(), ""+weightArduino, Toast.LENGTH_SHORT).show();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView verifyLabel = (TextView) getView().findViewById(R.id.weightVerify);
+                    if (weightArduino <= totalWeight + errorRoom && weightArduino >= totalWeight - errorRoom) {
+                        verifyLabel.setText("Correct Weight!");
+                        verifyLabel.setTextColor(Color.parseColor("#008000"));
+                    } else {
+                        verifyLabel.setText("Wrong Weight!");
+                        verifyLabel.setTextColor(Color.parseColor("#B20000"));
+                    }
+                }
+            });
+    }
 
 }

@@ -20,6 +20,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static android.os.Looper.*;
+
 /**
  * Created by Andy Seo on 3/19/2015.
  */
@@ -50,18 +52,21 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
      boolean connected = false;
     BluetoothDevice mDevice;
     static ConnectThread mConnectThread;
-    ConnectedThread mConnectedThread;
+    static ConnectedThread mConnectedThread = null;
+
 
   //  private OnFragmentInteractionListener mListener;
 
     // Message types used by the Handler
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_READ = 2;
-    String readMessage = "";
-    String readMessage1 = "";
-    String readMessage2 = "";
+    static String readMessage = "";
+    static String readMessage1 = "";
     SendReceiveBytes sendReceiveBT = null;
     static double measuredWeight;
+    double checkWeight;
+    static myHandler mHandler = new myHandler();
+    static int counter = 1;
 
 
 
@@ -78,14 +83,15 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
             BluetoothSocket tmp = null;
             mmDevice = device;
             try {
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+                //tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+                tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
             }
             mmSocket = tmp;
         }
 
         public BluetoothSocket getSocket(){
-            Log.i("Socket", ""+mmSocket);
+            //Log.i("Socket", ""+mmSocket);
             return mmSocket;
         }
 
@@ -114,7 +120,6 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
         }
     }
 
-
     public class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -135,6 +140,7 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
         }
 
         public void run() {
+            Log.i("ConnectedThread", "ConnectedThread run()");
             sendReceiveBT = new SendReceiveBytes(mmSocket);
             new Thread(sendReceiveBT).start();
             String red = "r";
@@ -145,6 +151,8 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
         public void cancel() {
             try {
                 mmSocket.close();
+//                mmInStream.close();
+//                mmOutStream.close();
             } catch (IOException e) {
             }
         }
@@ -180,6 +188,7 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
         }
 
         public void run() {
+            Log.i("SendReceiveBytes", "SendReceiveBytes run()");
             byte[] buffer = new byte[1024]; // buffer store for the stream
             int bytes; // bytes returned from read()
 
@@ -188,7 +197,6 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
                 try {
                     // Read from the InputStream
                     bytes = btInputStream.read(buffer);
-                    Log.e(TAG, "Failed to read");
                     // Send the obtained bytes to the UI activity
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
@@ -219,39 +227,40 @@ https://github.com/aron-bordin/Android-with-Arduino-Bluetooth/blob/master/Androi
 
 
 
-        /*
+
+    }
+            /*
 http://stackoverflow.com/questions/23540754/send-data-from-arduino-to-android-app-via-bluetooth
  */
-        // The Handler that gets information back from the Socket
+    // The Handler that gets information back from the Socket
 
 
-        private final Handler mHandler;
+    static class myHandler extends Handler{
 
-        {
-            mHandler = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    switch (msg.what) {
-                        case MESSAGE_WRITE:
-                            //Do something when writing
-                            break;
-                        case MESSAGE_READ:
-                            //Get the bytes from the msg.obj
-                            byte[] readBuf = (byte[]) msg.obj;
-                            // construct a string from the valid bytes in the buffer
-                            readMessage1 = new String(readBuf, 0, msg.arg1);
+        @Override
+            public  void handleMessage(Message msg) {
+//            Log.i("myHandler", "myHandler run()");
+                switch (msg.what) {
+                    case MESSAGE_WRITE:
+                        //Do something when writing
+                        break;
+                    case MESSAGE_READ:
+//                        Log.i("myHandler", "message_read run()");
+                        //Get the bytes from the msg.obj
+                        byte[] readBuf = (byte[]) msg.obj;
+                        // construct a string from the valid bytes in the buffer
+                        readMessage1 = new String(readBuf, 0, msg.arg1);
+                        if(counter > 1) {
                             readMessage = readMessage + readMessage1;
-                            
-                            measuredWeight = Double.parseDouble(readMessage);
-                            Log.i("Weight String: ", "" + readMessage);
-                            Log.i("Weight Double: ", "" + measuredWeight);
-                            Toast.makeText(getActivity(), ""+readMessage, Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+                            Log.i("Weight String: ", "" + readMessage1);
+                            counter = 1;
+                        }
+                        counter++;
+                        break;
                 }
-            };
-        }
-    }
+            }
+    };
+
 
 
 

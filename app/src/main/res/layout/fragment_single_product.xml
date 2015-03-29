@@ -212,11 +212,12 @@
             android:textSize="30dp"
             android:layout_alignParentLeft="true"/>
 
-        <Button
+        <ImageButton
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:scaleType="center"
+            android:src="@drawable/right"
             android:background="@drawable/add_to_list_button"
-            android:text="▶"
             android:id="@+id/addButton"
             android:layout_gravity="left"
             android:textColor="@color/White"

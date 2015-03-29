@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class SingleProductFragment extends BluetoothHelper {
     private String price;
     private Integer quantity = 1;
     private Double totalPrice;
-    double weightArduino;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -136,31 +137,30 @@ public class SingleProductFragment extends BluetoothHelper {
             }
         });
 
-        final Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
+        final ImageButton addButton = (ImageButton) singleProductView.findViewById(R.id.addButton);
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
                 quantity = (Integer.parseInt((String) ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).getText()));
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                /*
-                data transfer
-                 */
-                weightArduino = getWeight();
-                double weightNFC = Double.parseDouble(weight);
-                double minWeight = weightNFC*0.8;
-                double maxWeight = weightNFC*1.2;
-                Log.i("Measured Weight: ", ""+weightArduino);
-                Log.i("NFC Weight: ", ""+weightNFC);
 
-                if (weightArduino == 0){
-                    return;
-                }
-
-//                if (weightArduino < minWeight || weightArduino > maxWeight){
-//                    Log.i("Message", "Place the correct item in the cart");
+                //data transfer
+//                                weightArduino = getWeight();
+//                double weightNFC = Double.parseDouble(weight);
+//                double minWeight = weightNFC*0.8;
+//                double maxWeight = weightNFC*1.2;
+//                Log.i("Measured Weight: ", ""+weightArduino);
+//                Log.i("NFC Weight: ", ""+weightNFC););
+//
+//                if (weightArduino == 0){
 //                    return;
 //                }
+//
+////                if (weightArduino < minWeight || weightArduino > maxWeight){
+////                    Log.i("Message", "Place the correct item in the cart");
+////                    return;
+////                }
 
                 addItemToList();
                 ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment(), "List");
@@ -200,16 +200,16 @@ public class SingleProductFragment extends BluetoothHelper {
         return singleProductView;
     }
 
-    public double getWeight() {
-        mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
-        mConnectedThread.start();
-        if (mConnectedThread == null){
-            Log.e("Error Connected ", "null");
-            Toast.makeText(getActivity(), "Connect to Bluetooth in Settings!", Toast.LENGTH_SHORT).show();
-            return 0;
-        }
-        return measuredWeight;
-    }
+//    public double getWeight() {
+//        mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
+//        mConnectedThread.start();
+//        if (mConnectedThread == null){
+//            Log.e("Error Connected ", "null");
+//            Toast.makeText(getActivity(), "Connect to Bluetooth in Settings!", Toast.LENGTH_SHORT).show();
+//            return 0;
+//        }
+//        return measuredWeight;
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
