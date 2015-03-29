@@ -1,5 +1,4 @@
 package com.group12.syde362.checkout;
-
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,17 +17,10 @@ import android.widget.Toast;
 import android.widget.Button;
 import android.view.View.OnClickListener;
 
-
-
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SingleProductFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SingleProductFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Created by terencekim on 15-03-18.
  */
-public class SingleProductFragment extends BluetoothHelper {
+public class SingleProductDescrFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_NAME = "param1";
@@ -43,8 +35,8 @@ public class SingleProductFragment extends BluetoothHelper {
     private String name;
     private String price;
     private Integer quantity = 1;
+    private Integer listPosition = 0;
     private Double totalPrice;
-    double weightArduino;
 
     private OnFragmentInteractionListener mListener;
 
@@ -57,70 +49,54 @@ public class SingleProductFragment extends BluetoothHelper {
      * @return A new instance of fragment SingleProductFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SingleProductFragment newInstance(String result, String param2) {
-        SingleProductFragment fragment = new SingleProductFragment();
+    public static SingleProductDescrFragment newInstance(String name, String price, String weight, Integer quantity) {
+        SingleProductDescrFragment fragment = new SingleProductDescrFragment();
         //storeNFCData(result);
-
-        try {
-            JSONObject obj = new JSONObject(result);
-            String tempName = obj.getString("name");
-            String tempWeight = obj.getString("weight");
-            String tempPrice = obj.getString("price");
-            Bundle args = new Bundle();
-            args.putString(ARG_NAME, tempName);
-            args.putString(ARG_WEIGHT, tempWeight);
-            args.putString(ARG_PRICE, tempPrice);
-            args.putInt(ARG_QUANTITY, 1);
-            fragment.setArguments(args);
-        }
-        catch (JSONException e) {
-        }
+        fragment.name = name;
+        fragment.price = price;
+        fragment.weight = weight;
+        fragment.quantity = quantity;
         return fragment;
 
     }
 
-    public SingleProductFragment() {
+    public SingleProductDescrFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            name = getArguments().getString(ARG_NAME);
-            weight = getArguments().getString(ARG_WEIGHT);
-            price = getArguments().getString(ARG_PRICE);
-            quantity = getArguments().getInt(ARG_QUANTITY);
-        }
+        calcTotalPrice(quantity, price);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View singleProductView = inflater.inflate(R.layout.fragment_single_product, container, false);
+        final View singleProductDescrView = inflater.inflate(R.layout.fragment_single_product_descr, container, false);
 
-        TextView singleProductPrice = (TextView) singleProductView.findViewById(R.id.singleProductPrice);
-        TextView singleProductWeight = (TextView) singleProductView.findViewById(R.id.singleProductWeight);
-        TextView singleProductName = (TextView) singleProductView.findViewById(R.id.singleProductName);
-        final TextView updatingQuantity = (TextView) singleProductView.findViewById(R.id.updatingQuantity);
-        final TextView totalProductPrice = (TextView) singleProductView.findViewById(R.id.totalProductPrice);
+        TextView singleProductPrice = (TextView) singleProductDescrView.findViewById(R.id.singleProductPriceDescr);
+        TextView singleProductWeight = (TextView) singleProductDescrView.findViewById(R.id.singleProductWeightDescr);
+        TextView singleProductName = (TextView) singleProductDescrView.findViewById(R.id.singleProductNameDescr);
+        final TextView updatingQuantity = (TextView) singleProductDescrView.findViewById(R.id.updatingQuantityDescr);
+        final TextView totalProductPrice = (TextView) singleProductDescrView.findViewById(R.id.totalProductPriceDescr);
 
 
-        final Button quantityMinus = (Button) singleProductView.findViewById(R.id.minus);
-        final Button quantityPlus = (Button) singleProductView.findViewById(R.id.plus);
+        final Button quantityMinus = (Button) singleProductDescrView.findViewById(R.id.minusDescr);
+        final Button quantityPlus = (Button) singleProductDescrView.findViewById(R.id.plusDescr);
         final Animation buttonAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.button_pressed);
 
-        Bundle bundle = getArguments();
 
-        singleProductName.setText(bundle.getString(ARG_NAME));
-        singleProductPrice.setText("$" + bundle.getString(ARG_PRICE));
-        singleProductWeight.setText("" + bundle.getString(ARG_WEIGHT) + " kg");
-        totalProductPrice.setText("$" + bundle.getString(ARG_PRICE));
-        ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).setText(String.valueOf(quantity));
+        singleProductName.setText(name);
+        singleProductPrice.setText("$" + String.valueOf(price));
+        singleProductWeight.setText(String.valueOf(weight) + " kg");
+        ((TextView) singleProductDescrView.findViewById(R.id.updatingQuantityDescr)).setText(String.valueOf(quantity));
+        totalProductPrice.setText("$" + String.valueOf(String.format("%.2f",totalPrice)));
 
 
-        final Button cancelButton = (Button) singleProductView.findViewById(R.id.cancelButton);
+
+        Button cancelButton = (Button) singleProductDescrView.findViewById(R.id.cancelButtonDescr);
         cancelButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
@@ -132,39 +108,27 @@ public class SingleProductFragment extends BluetoothHelper {
                 ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
                 ft.replace(R.id.container, itemListFragment, "List");
                 ft.commit();
-                itemListFragment.removeSingleFragment(name);
             }
         });
 
-        final Button addButton = (Button) singleProductView.findViewById(R.id.addButton);
-        addButton.setOnClickListener(new OnClickListener() {
+        Button updateButton = (Button) singleProductDescrView.findViewById(R.id.updateButton);
+        updateButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Add Item", Toast.LENGTH_SHORT).show();
-                quantity = (Integer.parseInt((String) ((TextView) singleProductView.findViewById(R.id.updatingQuantity)).getText()));
+
+                ProductFragment itemListFragment = ((MainActivity)getActivity()).getItemListFragment();
+                itemListFragment.subtractFromTotalWeight(quantity, weight); //subtracting old weight before adding new weight
+                itemListFragment.subtractFromTotalPrice(quantity, price); //subtracting old price before adding new price
+
+                Integer newQuantity = (Integer.parseInt((String) ((TextView) singleProductDescrView.findViewById(R.id.updatingQuantityDescr)).getText()));
+                quantity = newQuantity;
                 android.support.v4.app.FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                /*
-                data transfer
-                 */
-                weightArduino = getWeight();
-                double weightNFC = Double.parseDouble(weight);
-                double minWeight = weightNFC*0.8;
-                double maxWeight = weightNFC*1.2;
-                Log.i("Measured Weight: ", ""+weightArduino);
-                Log.i("NFC Weight: ", ""+weightNFC);
-
-                if (weightArduino == 0){
-                    return;
-                }
-
-//                if (weightArduino < minWeight || weightArduino > maxWeight){
-//                    Log.i("Message", "Place the correct item in the cart");
-//                    return;
-//                }
-
-                addItemToList();
+                updateItemInList();
                 ft.replace(R.id.container, ((MainActivity)getActivity()).getItemListFragment(), "List");
                 ft.commit();
+
+
             }
         });
 
@@ -177,12 +141,12 @@ public class SingleProductFragment extends BluetoothHelper {
                     updatingQuantity.setText(String.valueOf(1));
                 }
                 else{
-                    Integer newQuantity = current - 1;
                     quantityMinus.startAnimation(buttonAnim);
+                    Integer newQuantity = current - 1;
                     updatingQuantity.setText(String.valueOf(newQuantity));
-                    totalProductPrice.setText("$" + String.valueOf(String.format("%.2f", calcTotalPrice(newQuantity, price))));
-                }
+                    totalProductPrice.setText("$"+String.valueOf(String.format("%.2f",calcTotalPrice(newQuantity, price))));
 
+                }
             }
         });
 
@@ -197,18 +161,7 @@ public class SingleProductFragment extends BluetoothHelper {
             }
         });
 
-        return singleProductView;
-    }
-
-    public double getWeight() {
-        mConnectedThread = new BluetoothHelper.ConnectedThread(mConnectThread.getSocket());
-        mConnectedThread.start();
-        if (mConnectedThread == null){
-            Log.e("Error Connected ", "null");
-            Toast.makeText(getActivity(), "Connect to Bluetooth in Settings!", Toast.LENGTH_SHORT).show();
-            return 0;
-        }
-        return measuredWeight;
+        return singleProductDescrView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -251,36 +204,31 @@ public class SingleProductFragment extends BluetoothHelper {
         public void onFragmentInteraction(Uri uri);
     }
 
-    public void addItemToList(){
-
-
-        ProductListItem item = new ProductListItem(this.name, this.weight, this.price, this.quantity);
-        //Fragment itemListFragment = this.getActivity().getSupportFragmentManager().findFragmentById(R.id.);
-        System.out.println("new item: " + item);
-        System.out.println("new item quantity: " + quantity);
-
-        ((MainActivity)getActivity()).getItemListFragment().getProductList().add(item);
-        ((MainActivity)getActivity()).getItemListFragment().updateTotalWeight(item, quantity);
-        ((MainActivity)getActivity()).getItemListFragment().updateTotalPrice(item, quantity);
-
-        SingleProductDescrFragment itemDescr = SingleProductDescrFragment.newInstance(this.name, this.price, this.weight, this.quantity);
-        android.support.v4.app.FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.container, itemDescr);
-        ft.addToBackStack(null);
-        ft.commit();
+    public void updateItemInList(){
+        ProductListItem updatedListItem = new ProductListItem(name, weight, price, quantity);
+        ((MainActivity)getActivity()).getItemListFragment().updateTotalPrice(updatedListItem, quantity);
+        ((MainActivity)getActivity()).getItemListFragment().updateTotalWeight(updatedListItem, quantity);
+        ((MainActivity)getActivity()).getItemListFragment().getProductList().set(listPosition, updatedListItem);
     }
 
     public Double calcTotalPrice(Integer quantity, String price){
-
-        Double unitPrice = Double.valueOf(price);
+        Double unitPrice = Double.valueOf(String.format("%.2f",Double.valueOf(price)));
         Double newTotalPrice = unitPrice * quantity;
         totalPrice = newTotalPrice;
         return newTotalPrice;
     }
 
+
     public String getName(){
         return name;
     }
+    public Integer getListPosition() {
+        return listPosition;
+    }
+    public void setListPosition(Integer position){
+        listPosition = position;
+    }
 
 }
+
+

@@ -1,10 +1,16 @@
 package com.group12.syde362.checkout;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -13,6 +19,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,15 +40,30 @@ import android.nfc.tech.Ndef;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.os.AsyncTask;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import com.paypal.android.sdk.payments.PayPalAuthorization;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalPaymentDetails;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
+
 
 
 public class MainActivity extends ActionBarActivity
 
-    implements NavigationDrawerFragment.NavigationDrawerCallbacks,ProductFragment.OnFragmentInteractionListener, SingleProductFragment.OnFragmentInteractionListener{
+    implements NavigationDrawerFragment.NavigationDrawerCallbacks,ProductFragment.OnFragmentInteractionListener,
+        SingleProductFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener, SingleProductDescrFragment.OnFragmentInteractionListener{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
+    public Activity activity = this;
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private TextView mTextView;
     private NfcAdapter mNfcAdapter;
@@ -53,6 +75,35 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+
+    /**
+     * - Set to PayPalConfiguration.ENVIRONMENT_PRODUCTION to move real money.
+     *
+     * - Set to PayPalConfiguration.ENVIRONMENT_SANDBOX to use your test credentials
+     * from https://developer.paypal.com
+     *
+     * - Set to PayPalConfiguration.ENVIRONMENT_NO_NETWORK to kick the tires
+     * without communicating to PayPal's servers.
+     */
+    private static final String CONFIG_ENVIRONMENT = PayPalConfiguration.ENVIRONMENT_SANDBOX;
+
+    // note that these credentials will differ between live & sandbox environments.
+    private static final String CONFIG_CLIENT_ID = "AU2P2X1zPpKmOG3YQufkcq1tTO-mCF7j-s6CKz-yT_oJj2Xiadg2Q2c_ihyJZ8HA_CpsDYW1KsYU46Pq";
+    private static final String CONFIG_RECEIVER_EMAIL = "terence.taehee.kim@gmail.com";
+
+
+    private static final int REQUEST_CODE_PAYMENT = 1;
+    private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;
+    private static final int REQUEST_CODE_PROFILE_SHARING = 3;
+
+    private static PayPalConfiguration config = new PayPalConfiguration()
+            .environment(CONFIG_ENVIRONMENT)
+            .clientId(CONFIG_CLIENT_ID)
+                    // The following are only used in PayPalFuturePaymentActivity.
+            .merchantName("Checked Out")
+            .merchantPrivacyPolicyUri(Uri.parse("https://www.example.com/privacy"))
+            .merchantUserAgreementUri(Uri.parse("https://www.example.com/legal"));
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +139,12 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        //****************************************************** PAYPAL *************************
+        Intent intent = new Intent(this, PayPalService.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        startService(intent);
+
 
     }
 
@@ -250,14 +307,39 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
+                String scannedItemName = null;
                 FragmentManager fragmentManager = getSupportFragmentManager();
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(result);
+                    scannedItemName = obj.getString("name");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //if this is a new item
+                if ((getItemListFragment().findMatchingSingleProductFragment(fragmentManager.getFragments(), scannedItemName)) == null) {
+                    SingleProductFragment newSingleProduct = SingleProductFragment.newInstance(result, "hi");
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container,  newSingleProduct).addToBackStack("Item")
+                            .commit();
+                    //TextView newSingleProductTextView = (TextView) newSingleProduct.getView().findViewById(R.id.single_product_fragment_view);
+                    //newSingleProductTextView.setText("Read content: " + result);
+                } else { //if this item already exists
+                    AlertDialog.Builder adBuilder = new AlertDialog.Builder(MainActivity.this);
+                    adBuilder.setMessage("This item is already added!");
+                    adBuilder.setCancelable(true);
+                    final AlertDialog existsDialog = adBuilder.create();
+                    existsDialog.show();
+                    final Timer t = new Timer();
+                    t.schedule(new TimerTask() {
+                        public void run() {
+                            existsDialog.dismiss(); // when the task active then close the dialog
+                            t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
+                        }
+                    }, 2000); // after 2 second (or 2000 miliseconds), the task will be active.
 
-                SingleProductFragment newSingleProduct = SingleProductFragment.newInstance(result, "hi");
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container,  newSingleProduct).addToBackStack("Item")
-                        .commit();
-                //TextView newSingleProductTextView = (TextView) newSingleProduct.getView().findViewById(R.id.single_product_fragment_view);
-                //newSingleProductTextView.setText("Read content: " + result);
+                }
+
             }
         }
     }
@@ -270,12 +352,12 @@ public class MainActivity extends ActionBarActivity
 
         if (position+1 == 1){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, itemListFragment)
+                    .replace(R.id.container, itemListFragment, "List")
                     .commit();
         }
         else {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, itemListFragment)
+                    .replace(R.id.container, itemListFragment, "List")
                     .commit();
         }
     }
@@ -324,6 +406,13 @@ public class MainActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.e("Setting", "Setting button");
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SettingsFragment settingsFragment = new SettingsFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, settingsFragment).addToBackStack("Settings")
+                        .commit();
+
             return true;
         }
 
@@ -381,6 +470,105 @@ public class MainActivity extends ActionBarActivity
 
     public ProductFragment getItemListFragment(){
         return itemListFragment;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Handle the back button
+        if (event.getAction()!=KeyEvent.ACTION_DOWN){
+            return true;
+        }
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            Fragment listFragment = fragmentManager.findFragmentByTag("List");
+            if(listFragment.isVisible()){
+                new AlertDialog.Builder(this)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setMessage("Exit CheckedOut?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    //Stop the activity
+                                    MainActivity.this.finish();
+                                }
+
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+
+                    return true;
+            }
+            Log.d("hi","j");
+
+            return true;
+        }
+        else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    public PayPalPayment getThingsToBuy(String paymentIntent, double totalPrice) {
+        return new PayPalPayment(new BigDecimal(String.valueOf(totalPrice)), "CAD", "CheckedOut Total",
+                paymentIntent);
+    }
+
+    public void startPayPalActivity(Double totalPrice){
+        PayPalPayment thingToBuy = getThingsToBuy(PayPalPayment.PAYMENT_INTENT_SALE, totalPrice);
+
+        /*
+         * See getStuffToBuy(..) for examples of some available payment options.
+         */
+
+        Intent intent = new Intent(activity, PaymentActivity.class);
+
+        // send the same configuration for restart resiliency
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+
+        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, thingToBuy);
+
+        //setResult(RESULT_OK, intent);
+        startActivityForResult(intent, REQUEST_CODE_PAYMENT);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int request = requestCode;
+        int result  = resultCode;
+        Intent retrievedData = data;
+        Log.d("Paypal", "man" );
+        if (requestCode == REQUEST_CODE_PAYMENT) {
+            if (resultCode == Activity.RESULT_OK) {
+                PaymentConfirmation confirm = data
+                        .getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+                if (confirm != null) {
+                    try {
+                        System.out.println("Responseeee"+confirm);
+                        Log.i("paymentExample", confirm.toJSONObject().toString());
+
+
+                        JSONObject jsonObj=new JSONObject(confirm.toJSONObject().toString());
+
+                        String paymentId=jsonObj.getJSONObject("response").getString("id");
+                        System.out.println("payment id:-=="+paymentId);
+                        Toast.makeText(getApplicationContext(), paymentId, Toast.LENGTH_LONG).show();
+
+                    } catch (JSONException e) {
+                        Log.e("paymentExample", "an extremely unlikely failure occurred: ", e);
+                    }
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Log.i("paymentExample", "The user canceled.");
+            } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
+                Log.i("paymentExample", "An invalid Payment was submitted. Please see the docs.");
+            }
+        }
+
+
     }
 
 }
