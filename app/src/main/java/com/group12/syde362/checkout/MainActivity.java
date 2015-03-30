@@ -509,6 +509,7 @@ public class MainActivity extends ActionBarActivity
         else {
             return super.onKeyDown(keyCode, event);
         }
+        
     }
 
     public PayPalPayment getThingsToBuy(String paymentIntent, double totalPrice) {
